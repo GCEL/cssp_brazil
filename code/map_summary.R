@@ -10,13 +10,13 @@ library(ncdf4)
 
 #upload data
 #wood productivity
-woodprod_00_09 <- brick('./maps/WoodyProductivity20002009_Mg_perHa_perYear_111km.tif')
-woodprod_10_16 <- brick('./maps/WoodyProductivity20102016_Mg_perHa_perYear_111km.tif')
+woodprod_00_09 <- brick('R://brazil_leeds_maps/WoodyProductivity20002009_Mg_perHa_perYear_111km.tif')
+woodprod_10_16 <- brick('R://brazil_leeds_maps/WoodyProductivity20102016_Mg_perHa_perYear_111km.tif')
 #biomass mortality
-biommort_00_09 <- brick('./maps/BiomassMortality_20002009_Mg_perHa_perYear_111km.tif')
-biommort_10_16 <- brick('./maps/BiomassMortality_20102016_Mg_perHa_perYear_111km.tif')
+biommort_00_09 <- brick('R://brazil_leeds_maps/BiomassMortality_20002009_Mg_perHa_perYear_111km.tif')
+biommort_10_16 <- brick('R://brazil_leeds_maps/BiomassMortality_20102016_Mg_perHa_perYear_111km.tif')
 #biomass
-biomass_amazon <- brick('./maps/AbovegroundBiomass_Mg_perHa_111km.tif')
+biomass_amazon <- brick('R://brazil_leeds_maps/AbovegroundBiomass_Mg_perHa_111km.tif')
 
 #summary
 summary(woodprod_00_09)
@@ -43,14 +43,9 @@ cellStats(biommort_10_16, 'mean');cellStats(biommort_10_16, 'sd')
 cellStats(biomass_amazon, 'mean');cellStats(biomass_amazon, 'sd')
 
 #models
-cardamomnpp <- stack('./maps/CARDAMOM.nc', varname="NPP")
-latest_cardamom_nppwood <- stack('./maps/CARDAMOM_Brazil_1x1_2001_2017_v1.0.nc',varname="NPP_wood_flx")
+latest_cardamom_nppwood <- stack('G://CARDAMOM_ILAMB/CARDAMOM_Brazil_1x1_2001_2017_v1.0.nc',varname="NPP_wood_flx")
 
-# nc_data <- nc_open('./maps/CARDAMOM_Brazil_1x1_2001_2017_v1.0.nc')
-# print(nc_data)
-# nc_close(nc_data)
-
-amazon_mask <- brick('./maps/ilamb-mask-AMAZON.nc')
+amazon_mask <- brick('./data/ilamb-mask-AMAZON.nc')
 amazon_mask_pol <- rasterToPolygons(amazon_mask, dissolve = TRUE)
 cardamomnpp_amazon <- crop(cardamomnpp, amazon_mask_pol)
 biomass_amazon_extent <- extent(biomass_amazon)
