@@ -1,5 +1,7 @@
-#Summary of Leeds data----
-#download packages
+######################################################
+###################Summary of Leeds data##############
+######################################################
+#download packages----
 library(sp)
 library(rgdal)
 library(raster)
@@ -9,7 +11,7 @@ library(viridis)
 library(rasterVis)
 library(ncdf4)
 
-#upload data
+#Leeds data----
 #wood productivity
 woodprod_00_09 <- brick('R://brazil_leeds_maps/WoodyProductivity20002009_Mg_perHa_perYear_111km.tif')
 woodprod_10_16 <- brick('R://brazil_leeds_maps/WoodyProductivity20102016_Mg_perHa_perYear_111km.tif')
@@ -69,71 +71,65 @@ ggplot(stats_leeds_table_error) +
   theme(text = element_text(size = 20))
 
 
-#models
+#models----
 nc_card <- nc_open('G://CARDAMOM_ILAMB/CARDAMOM_Brazil_1x1_2001_2017_v1.0.nc')
-print(nc_card)
-nc_close(nc_card)
+#G://CARDAMOM_Brazil/processed/20200924/Brazil_1deg_monthly_nopotAGB_2001_2017.nc
+print(nc_card) #print properties
+nc_close(nc_card) #close nc file
 
+#extract NPP flux variable and convert to rasterer
 cardamom_nppwood <- stack('G://CARDAMOM_ILAMB/CARDAMOM_Brazil_1x1_2001_2017_v1.0.nc',varname="NPP_wood_flx")
 class(getZ(cardamom_nppwood))
 plot(cardamom_nppwood$X2001.01.01)
 
-for(i in 1:nlayers(cardamom_nppwood)){
-  plot(s[[i]])}
-cardamom_nppwood[cardamom_nppwood> 5000000] <- NA
+cardamom_nppwood_1101<-cardamom_nppwood$X2001.01.01 #template to get data ignore values (green in plot of previous step)
+cardamom_nppwood_1101[cardamom_nppwood_1101 > 500000] <- NA #ignore values above 500000
+plot(cardamom_nppwood_1101) #view masked out values
 
-cardamom_nppwood_1101<-cardamom_nppwood$X2001.01.01
-plot(cardamom_nppwood_1101)
+cardamom_nppwood_masked <- mask(cardamom_nppwood, cardamom_nppwood_1101) #mask out data ignore values
+plot(cardamom_nppwood_masked$X2001.01.01) #check successful masking
 
-brazil_amazon_intersect <- intersect(biomass_amazon,cardamom_nppwood_1101)
-brazil_amazon_intersect <- brazil_amazon_intersect> -Inf
-brazil_amazon_intersect_pol <- rasterToPolygons(brazil_amazon_intersect, dissolve = TRUE)
-plot(brazil_amazon_intersect_pol)
-plot(brazil_amazon_intersect)
-
-cardamom_nppwood_masked <- mask(cardamom_nppwood, cardamom_nppwood_1101)
-class(getZ(cardamom_nppwood_masked))
-plot(cardamom_nppwood_masked$X2001.01.01)
-
+#extract raster images of two periods of interest
 cardamom_nppwood_masked_01_10 <- cardamom_nppwood_masked[[which(getZ(cardamom_nppwood_masked) >= as.Date("2001-01-01") & getZ(cardamom_nppwood_masked) <= as.Date("2009-12-01"))]]
 cardamom_nppwood_masked_10_16 <- cardamom_nppwood_masked[[which(getZ(cardamom_nppwood_masked) >= as.Date("2010-01-01") & getZ(cardamom_nppwood_masked) <= as.Date("2016-12-01"))]]
 
+#calculate mean over time
 cardamom_nppwood_masked_01_10_mean <- stackApply(cardamom_nppwood_masked_01_10, indices =  rep(1,nlayers(cardamom_nppwood_masked_01_10)), fun = "mean")
 cardamom_nppwood_masked_10_16_mean <- stackApply(cardamom_nppwood_masked_10_16, indices =  rep(1,nlayers(cardamom_nppwood_masked_10_16)), fun = "mean")
 
-par(mfrow=c(1,2))
+#visualize mean NPP flux over two periods
+par(mfrow=c(1,1))
 plot(cardamom_nppwood_masked_01_10_mean,main='CARDAMOM NPP flux for wood 2000-2009')
 plot(cardamom_nppwood_masked_10_16_mean,main='CARDAMOM NPP flux for wood 2010-2016')
 
+#calculate spatial statistics (mean, sd) of two periods 
 cellStats(cardamom_nppwood_masked_01_10_mean, 'mean');cellStats(cardamom_nppwood_masked_01_10_mean, 'sd')
 cellStats(cardamom_nppwood_masked_10_16_mean, 'mean');cellStats(cardamom_nppwood_masked_10_16_mean, 'sd')
 
-cardamom_nppwood_1101[cardamom_nppwood_1101 > 500000] <- NA
-cellStats(cardamom_nppwood_1101, 'mean');cellStats(cardamom_nppwood_1101, 'sd')
+# cardamom_nppwood_01_10 <- cardamom_nppwood[[which(getZ(cardamom_nppwood) >= as.Date("2001-01-01") & getZ(cardamom_nppwood) <= as.Date("2009-12-01"))]]
+# cardamom_nppwood_10_16 <- cardamom_nppwood[[which(getZ(cardamom_nppwood) >= as.Date("2010-01-01") & getZ(cardamom_nppwood) <= as.Date("2016-12-01"))]]
+# 
+# cardamom_nppwood_01_10_indices <- as.numeric(format(as.Date(names(cardamom_nppwood_01_10), format = "X%Y.%m.%d"), format = "%Y"))
+# cardamom_nppwood_01_10_mean <- stackApply(cardamom_nppwood_01_10, cardamom_nppwood_01_10_indices, fun = mean)
+# plot(cardamom_nppwood_01_10_mean$index_2001)
 
-mr <- mask(cardamom_nppwood$X2001.01.01, cardamom_nppwood_1101)
+#intersect of Brazil and amazon----
+biomass_amazon_mask <- biomass_amazon > -Inf
+biomass_amazon_mask_pol <- rasterToPolygons(biomass_amazon_mask, dissolve=TRUE)
+plot(biomass_amazon_mask_pol)
 
-cardamom_nppwood_01_10 <- cardamom_nppwood[[which(getZ(cardamom_nppwood) >= as.Date("2001-01-01") & getZ(cardamom_nppwood) <= as.Date("2009-12-01"))]]
-cardamom_nppwood_10_16 <- cardamom_nppwood[[which(getZ(cardamom_nppwood) >= as.Date("2010-01-01") & getZ(cardamom_nppwood) <= as.Date("2016-12-01"))]]
-
-cardamom_nppwood_01_10_indices <- as.numeric(format(as.Date(names(cardamom_nppwood_01_10), format = "X%Y.%m.%d"), format = "%Y"))
-cardamom_nppwood_01_10_mean <- stackApply(cardamom_nppwood_01_10, cardamom_nppwood_01_10_indices, fun = mean)
-plot(cardamom_nppwood_01_10_mean$index_2001)
-
-
-cardamom_brazil_mask <- cardamom_nppwood_01_10$X2001.01.01> -Inf
+cardamom_brazil_mask <- cardamom_nppwood_1101> -Inf
 cardamom_brazil_mask_pol <- rasterToPolygons(cardamom_brazil_mask, dissolve = TRUE)
 plot(cardamom_brazil_mask_pol)
 
 amazon_mask <- brick('./data/ilamb-mask-AMAZON.nc')
+amazon_mask <- amazon_mask> -Inf
 amazon_mask_pol <- rasterToPolygons(amazon_mask, dissolve = TRUE)
+plot(amazon_mask_pol)
+
 cardamomnpp_amazon <- crop(cardamomnpp, amazon_mask_pol)
 biomass_amazon_extent <- extent(biomass_amazon)
 plot(biomass_amazon_extent)
-
-r <- biomass_amazon > -Inf
-pp <- rasterToPolygons(r, dissolve=TRUE)
-plot(pp)
 
 cardamomnpp_amazon <- crop(cardamomnpp, pp)
 
@@ -145,6 +141,10 @@ plot(cardamomnpp_amazon$X2001.01.01)
 
 names(cardamomnpp_amazon[,1:120,])
 
-cellStats(cardamom_nppwood_01_10_mean, 'mean');cellStats(cardamom_nppwood_01_10_mean, 'sd')
-cellStats(latest_cardamom_nppwood, 'mean');cellStats(latest_cardamom_nppwood, 'sd')
-cellStats(cardamom_nppwood_01_10_mean, 'mean');cellStats(cardamom_nppwood_01_10_mean, 'sd')
+brazil_amazon_intersect <- intersect(biomass_amazon,cardamom_nppwood_1101)
+brazil_amazon_intersect <- brazil_amazon_intersect> -Inf
+brazil_amazon_intersect_pol <- rasterToPolygons(brazil_amazon_intersect, dissolve = TRUE)
+plot(brazil_amazon_intersect_pol)
+plot(brazil_amazon_intersect)
+
+
