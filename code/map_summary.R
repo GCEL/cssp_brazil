@@ -11,6 +11,7 @@ library(viridis)
 library(rasterVis)
 library(ncdf4)
 
+#done
 #Leeds data----
 #wood productivity
 woodprod_00_09 <- brick('R://brazil_leeds_maps/WoodyProductivity20002009_Mg_perHa_perYear_111km.tif')
@@ -189,17 +190,43 @@ plot(cardamom_outputwood_gm2d_masked_10_16_mean,main='CARDAMOM Output wood 2010-
 
 #done
 #intersect of Brazil and amazon----
-amazon_mask <- brick('./data/ilamb-mask-AMAZON.nc')
+nc_amazonmask <- nc_open('R://ILAMB_tutorial/ilamb-mask-AMAZON.nc')
+print(nc_amazonmask) #print properties
+nc_close(nc_amazonmask) #close nc file
+
+amazon_mask <- raster('R://ILAMB_tutorial/ilamb-mask-AMAZON.nc')
+amazon_mask
+summary(amazon_mask)
+print(amazon_mask)
+plot(amazon_mask)
+
+# write the raster layer (tmpin)
+outfile <- "amazon_mask_raster.nc"
+#crs(amazon_mask) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0" 
+writeRaster(amazon_mask, outfile, overwrite=TRUE, format="CDF", varname="ids", varunit="", xname="lon", yname="lat", zname='ids')
+
+nc_amazon_mask <- nc_open('./amazon_mask_raster.nc')
+nc_amazon_mask
+print(nc_amazon_mask) #print properties
+nc_close(nc_amazon_mask) #close nc file
+
+amazon_mask_new <- raster('./amazon_mask_raster.nc')
+amazon_mask_new
+summary(amazon_mask_new)
+print(amazon_mask_new)
+plot(amazon_mask_new)
+
 amazon_mask[amazon_mask < 0] <- NA
 amazon_mask <- amazon_mask> -Inf
 plot(amazon_mask)
 amazon_mask_pol <- rasterToPolygons(amazon_mask, dissolve = TRUE)
 plot(amazon_mask_pol,add=T)
 
-# biomass_amazon_mask <- biomass_amazon > -Inf
-# biomass_amazon_mask_pol <- rasterToPolygons(biomass_amazon_mask, dissolve=TRUE)
-# plot(biomass_amazon_mask_pol)
-# 
+biomass_amazon_mask <- biomass_amazon > -Inf
+biomass_amazon_mask_pol <- rasterToPolygons(biomass_amazon_mask, dissolve=TRUE)
+plot(biomass_amazon_mask_pol)
+plot(biomass_amazon_mask_pol,add=T)
+
 # cardamom_brazil_mask <- cardamom_nppwood_1101> -Inf
 # cardamom_brazil_mask_pol <- rasterToPolygons(cardamom_brazil_mask, dissolve = TRUE)
 # plot(cardamom_brazil_mask_pol)
@@ -405,5 +432,164 @@ hist(jules_cwood_01_09_gm2d_amazon_brazil)
 cellStats(jules_nppwood_01_09_gm2d_amazon_brazil, 'mean');cellStats(jules_nppwood_01_09_gm2d_amazon_brazil, 'sd')
 cellStats(jules_outputwood_01_09_gm2d_amazon_brazil, 'mean');cellStats(jules_outputwood_01_09_gm2d_amazon_brazil, 'sd')
 cellStats(jules_cwood_01_09_gm2d_amazon_brazil, 'mean');cellStats(jules_cwood_01_09_gm2d_amazon_brazil, 'sd')
+
+#done
+
+#compare----
+leeds_cardamom_npp <- overlay(leeds_woodprod_00_09_gm2d_amazon_brazil, cardamom_nppwood_01_09_gm2d_amazon_brazil, fun=function(x, y) { sqrt((y-x)/x) } )
+inland_cwood_012001 <- inland_cwood$X2001.01.15
+plot(inland_cwood_012001)
+plot(biomass_amazon)
+
+print(amazon_mask)
+plot(biomass_amazon_mask_pol,add=T)
+
+#create mask
+e <- extent(inland_cwood_012001) #use south america extent
+r <- raster(e)
+res(r)<- 0.5 #use resolution to mirror other masks in ilamb/ could be 1x1
+values(r) <- 1
+crs(r)<-crs(amazon_mask)
+r
+plot(r)
+
+r_amazon <- mask(r, biomass_amazon_mask_pol, updatevalue=0)
+r_amazon
+summary(r_amazon)
+plot(r_amazon)
+
+writeRaster(r_amazon, "ilamb-mask-AMAZONIA.tif", overwrite=TRUE, format="GTiff")
+writeRaster(r_amazon, "mask-AMAZONIA-remap.nc", overwrite=TRUE, format="CDF",varname='ids',datatype='LOG1S', xname="lon", yname="lat")
+
+r_southamerica <- mask(r, cardamom_agb_0101_mask_pol, updatevalue=0)
+r_southamerica
+summary(r_southamerica)
+plot(r_southamerica)
+
+#writeRaster(r_amazon, "ilamb-mask-AMAZONIA.tif", overwrite=TRUE, format="GTiff")
+writeRaster(r_southamerica, "mask-SOUTHAMERICA-remap.nc", overwrite=TRUE, format="CDF",varname='ids',datatype='LOG1S', xname="lon", yname="lat")
+
+amazonia_mask_ilamb <- mask(amazon_mask, biomass_amazon_mask_pol, updatevalue=0, inverse=T)
+summary(amazonia_mask_ilamb)
+plot(amazonia_mask_ilamb)
+
+#done
+#covert to nc file for ILAMB----
+writeRaster(amazon_mask, "r_amazon.nc", overwrite=TRUE, format="CDF", xname="lon", yname="lat")
+
+nc_r_amazon <- nc_open('./r_amazon.nc')
+print(nc_r_amazon) #print properties
+nc_close(nc_r_amazon) #close nc file
+
+nc_amazonmask <- nc_open('R://ILAMB_tutorial/ilamb-mask-AMAZON.nc')
+print(nc_amazonmask) #print properties
+ncvar_get(nc_amazonmask)
+nc_close(nc_amazonmask) #close nc file
+
+summary(r_amazon)
+plot(r_amazon)
+
+ymax(r_amazon)-ymin(r_amazon)
+
+lat_dim= ymax(r_amazon)-ymin(r_amazon)
+long_dim= xmax(r_amazon)-xmin(r_amazon)
+
+latitude = seq(ymin(r_amazon),ymax(r_amazon), length.out = lat_dim)
+longitude = seq(xmin(r_amazon),xmax(r_amazon), length.out = long_dim)
+
+amazon_mask_nc = array(NA, dim=c(long_dim,lat_dim,nos_quantile))
+#check s america files----
+nc_card <- nc_open('G://ILAMB_runs_output/CSSP_stippling/DATA/benchmark/CARDAMOM_monthly_1x1_SAmerica.nc')
+print(nc_card) #print properties
+nc_close(nc_card) #close nc file
+
+cardamom_agb <- stack('G://ILAMB_runs_output/CSSP_stippling/DATA/benchmark/CARDAMOM_monthly_1x1_SAmerica.nc',varname="npptot")
+class(getZ(cardamom_agb))
+plot(cardamom_agb$X2001.01.15)
+
+cardamom_agb_0101<-cardamom_agb$X2001.01.15
+plot(cardamom_agb_0101)
+cardamom_agb_0101_mask <- cardamom_agb_0101 > -Inf
+cardamom_agb_0101_mask_pol <- rasterToPolygons(cardamom_agb_0101_mask, dissolve=TRUE)
+plot(cardamom_agb_0101_mask_pol)
+plot(biomass_amazon_mask_pol,add=T)
+
+
+nc_inland <- nc_open('R://INLAND_monthly_1x1_SAmerica.nc', write=TRUE )
+print(nc_inland) #print properties
+attributes(nc_inland)$names
+attributes(nc_inland$var)$names[17]
+#attributes(nc_inland$var)$names[17]
+ncatt_get(nc_inland, attributes(nc_inland$var)$names[17])
+
+ncatt_put( nc_inland, "npptot", "units", "g.m-2.d-1")
+
+old_varname <-'npptote'
+new_varname <- 'npptot'
+
+nc_inland <- ncvar_rename( nc_inland, old_varname, new_varname )
+nc_close(nc_inland) #close nc file
+
+inland_agb <- stack('G://ILAMB_runs_output/CSSP_stippling/INLAND/INLAND_monthly_1x1_SAmerica.nc',varname="woodbio")
+class(getZ(inland_agb))
+plot(inland_agb$X2001.01.15)
+
+nc_jules <- nc_open('G://ILAMB_runs_output/CSSP_stippling/JULES/JULES_monthly_1x1_SAmerica.nc')
+print(nc_jules) #print properties
+nc_close(nc_jules) #close nc file
+
+jules_agb <- stack('G://ILAMB_runs_output/CSSP_stippling/JULES/JULES_monthly_1x1_SAmerica.nc',varname="litC")
+class(getZ(jules_agb))
+plot(jules_agb$X2001.01.15)
+
+
+#create new file----
+xvals <- seq(-84,-32, length.out = 104)
+yvals <- seq(-57,14, length.out = 142)
+nx <- 104
+ny <- 142
+
+cnames   <-c("amazonia")
+nstrings <- length(cnames)
+## define dimension
+xdim <- ncdim_def( "lon", units="degrees_east", xvals)
+ydim <- ncdim_def( "lat", units="degrees_north", yvals)
+
+dimnchar   <- ncdim_def("nb",   "", 1:2, create_dimvar=FALSE )
+dimregion <- ncdim_def("n", "", 1:nstrings, create_dimvar=FALSE )
+
+## make var
+mv <--9.223372e+18 # missing value
+var_mask <- ncvar_def( 'ids', "", list(xdim,ydim), mv,prec='integer')
+varregion  <- ncvar_def("labels", "", list(dimregion) ,prec="char")
+
+## make output file
+output_fname <- 'new_amazon_mask.nc'
+mask_new <- nc_create( output_fname, list(var_mask,varregion),force_v4=TRUE)
+mask_new
+
+## add data
+ncvar_put( mask_new, "labels", cnames, verbose=TRUE )
+
+data_mask <- array(0.,dim=c(72,62))
+
+ncvar_put( mask_new, var_mask, data_mask, start=c(10,73), count=c(72,61))
+
+ncatt_put( mask_new, "ids", "labels", "labels", prec="text" )
+
+attributes(mask_new)$names
+attributes(mask_new$var)$names
+ncatt_get(mask_new, attributes(mask_new$var)$names[1])
+
+nc_close(mask_new)
+
+amazonia_mask_test <- raster('./new_amazon_mask.nc')
+summary(amazonia_mask_test)
+plot(amazonia_mask_test)
+nc_amazonmask_test <- nc_open('./new_amazon_mask.nc') #gcel
+nc_amazonmask_test
+nc_close(nc_amazonmask_test)
+#varcolors  <- ncvar_def("colours", "", list(dimnchar,dimregion) )
+
 
 #done
