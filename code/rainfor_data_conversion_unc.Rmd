@@ -1,0 +1,174 @@
+---
+title: "RAINFOR-LEEDS data summary"
+output:
+  html_document:
+    css: styles.css
+    df_print: paged
+---
+<style type="text/css">
+.main-container {
+  max-width: 1900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+```{r echo = FALSE, message=FALSE, warning=FALSE}
+library(ncdf4); library(raster); library(dplyr);library(ggplot2);library(ggpubr);library(quantreg);library(ggpp);library(rgeos);library(ggpmisc);library(rgdal)
+```
+
+
+Summary of raw RAINFOR biomass data as sent by Leeds after analysis. Plots of Above ground woody biomass in t/ha and woody productivity and mortalityt/ha/yr
+```{r echo = FALSE, message=FALSE, fig.asp = 0.8, fig.width = 8}
+options(width = 100)
+
+#wood productivity t/ha/year
+woodprod_00_09 <- brick('R://brazil_leeds_maps/WoodyProductivity20002009_Mg_perHa_perYear_111km.tif')
+woodprod_10_16 <- brick('R://brazil_leeds_maps/WoodyProductivity20102016_Mg_perHa_perYear_111km.tif')
+#biomass mortality t/ha/year
+biommort_00_09 <- brick('R://brazil_leeds_maps/BiomassMortality_20002009_Mg_perHa_perYear_111km.tif')
+biommort_10_16 <- brick('R://brazil_leeds_maps/BiomassMortality_20102016_Mg_perHa_perYear_111km.tif')
+#biomass t/ha
+biomass_amazon <- brick('R://brazil_leeds_maps/AbovegroundBiomass_Mg_perHa_111km.tif')
+
+#plots
+plot(biomass_amazon,main='Woody Biomass t/ha')
+plot(woodprod_00_09,main='Woody Productivity 2000-2009 t/ha/year')
+plot(woodprod_10_16,main='Woody Productivity 2010-2016 t/ha/year')
+plot(biommort_00_09,main='Woody Mortality 2000-2009 t/ha/year')
+plot(biommort_10_16,main='Woody Mortality 2010-2016 t/ha/year')
+
+
+fmet<-c('','Mean','SD')
+fwb<-c('Woody Biomass',formatC(cellStats(biomass_amazon, 'mean'), format="f", big.mark=",", digits=0),formatC(cellStats(biomass_amazon, 'sd'), format="f", big.mark=",", digits=0))
+fwp1<-c('Woody Productivity 2000-2009',formatC(cellStats(woodprod_00_09, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(woodprod_00_09, 'sd'), format="f", digits=2))
+fwp2<-c('Woody Productivity 2010-2016',formatC(cellStats(woodprod_10_16, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(woodprod_10_16, 'sd'), format="f", digits=2))
+fwm1<-c('Woody Mortality 2000-2009',formatC(cellStats(biommort_00_09, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(biommort_00_09, 'sd'), format="f", digits=2))
+fwm2<-c('Woody Mortality 2010-2016',formatC(cellStats(biommort_10_16, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(biommort_10_16, 'sd'), format="f", digits=2))
+as.data.frame(bind_cols(fmet,fwb,fwp1,fwp2,fwm1,fwm2))
+
+
+```
+
+
+Mean and Std Dev. RAINFOR data after including BGB and converted to g.m-2 and g.m-2.d-1 
+```{r echo = FALSE, message=FALSE}
+options(width = 100)
+#functions for modification
+thayr_to_gCm2day_fun <- function(x) {
+  x *0.48 * (100/365.25) }
+tha_to_gCm2_fun <- function(x) {
+  x *0.48 * 100 }
+bgb_inclusion <- function(x){
+  x+(0.489 * x ** 0.89)
+}
+
+#include BGB to wood dynamics
+woodprod_00_09 <- calc (woodprod_00_09,bgb_inclusion)
+woodprod_10_16 <- calc (woodprod_10_16,bgb_inclusion)
+biommort_00_09 <- calc (biommort_00_09,bgb_inclusion)
+biommort_10_16 <- calc (biommort_10_16,bgb_inclusion)
+biomass_amazon <- calc (biomass_amazon,bgb_inclusion)
+
+#convert to gcm2
+woodprod_00_09_gCm2d <- calc(woodprod_00_09, thayr_to_gCm2day_fun)
+woodprod_10_16_gCm2d <- calc(woodprod_10_16, thayr_to_gCm2day_fun)
+biommort_00_09_gCm2d <- calc(biommort_00_09, thayr_to_gCm2day_fun)
+biommort_10_16_gCm2d <- calc(biommort_10_16, thayr_to_gCm2day_fun)
+biomass_amazon_gCm2 <- calc(biomass_amazon, tha_to_gCm2_fun)
+
+met<-c('','Mean','SD')
+wb<-c('Woody Biomass',formatC(cellStats(biomass_amazon_gCm2, 'mean'), format="f", big.mark=",", digits=0),formatC(cellStats(biomass_amazon_gCm2, 'sd'), format="f", big.mark=",", digits=0))
+wp1<-c('Woody Productivity 2000-2009',formatC(cellStats(woodprod_00_09_gCm2d, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(woodprod_00_09_gCm2d, 'sd'), format="f", digits=2))
+wp2<-c('Woody Productivity 2010-2016',formatC(cellStats(woodprod_10_16_gCm2d, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(woodprod_10_16_gCm2d, 'sd'), format="f", digits=2))
+wm1<-c('Woody Mortality 2000-2009',formatC(cellStats(biommort_00_09_gCm2d, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(biommort_00_09_gCm2d, 'sd'), format="f", digits=2))
+wm2<-c('Woody Mortality 2010-2016',formatC(cellStats(biommort_10_16_gCm2d, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(biommort_10_16_gCm2d, 'sd'), format="f", digits=2))
+
+as.data.frame(bind_cols(met,wb,wp1,wp2,wm1,wm2))
+```
+
+Visualize histogram and plots
+```{r echo = FALSE, message=FALSE, fig.asp = 0.8, fig.width = 7}
+hist(biomass_amazon_gCm2,main='Spread of Woody Biomass gC/m2');plot(biomass_amazon_gCm2,main='Woody Biomass gC/m2')
+hist(woodprod_00_09_gCm2d,main='Spread of Woody Productivity 2000-2009 gC/m2/day');plot(woodprod_00_09_gCm2d,main='Woody Productivity 2000-2009 gC/m2/day')
+hist(woodprod_10_16_gCm2d,main='Spread of Woody Productivity 2010-2016 gC/m2/day');plot(woodprod_10_16_gCm2d,main='Woody Productivity 2010-2016 gC/m2/day')
+hist(biommort_00_09_gCm2d,main='Spread of Woody Mortality 2000-2009 gC/m2/day');plot(biommort_00_09_gCm2d,main='Woody Mortality 2000-2009 gC/m2/day')
+hist(biommort_10_16_gCm2d,main='Spread of Woody Mortality 2010-2016 gC/m2/day');plot(biommort_10_16_gCm2d,main='Woody Mortality 2010-2016 gC/m2/day')
+
+```
+
+Calculate uncertainty 
+```{r fig.asp = 0.9, fig.width = 10}
+#uncertainty calculation
+biomass_amazon_gCm2_unc <- biomass_amazon_gCm2*0.25
+woodprod_00_09_gCm2d_unc <- woodprod_00_09_gCm2d*0.25
+woodprod_10_16_gCm2d_unc <- woodprod_10_16_gCm2d*0.25
+biommort_00_09_gCm2d_unc <- biommort_00_09_gCm2d*0.25
+biommort_10_16_gCm2d_unc <- biommort_10_16_gCm2d*0.25
+
+cellStats(biomass_amazon_gCm2_unc, 'mean')
+cellStats(woodprod_00_09_gCm2d_unc, 'mean')
+cellStats(woodprod_10_16_gCm2d_unc, 'mean')
+cellStats(biommort_00_09_gCm2d_unc, 'mean')
+cellStats(biommort_10_16_gCm2d_unc, 'mean')
+
+lower_biomass_amazon_gCm2 <- biomass_amazon_gCm2-biomass_amazon_gCm2_unc
+upper_biomass_amazon_gCm2 <- biomass_amazon_gCm2+biomass_amazon_gCm2_unc
+
+lower_woodprod_00_09_gCm2d <- woodprod_00_09_gCm2d-woodprod_00_09_gCm2d_unc
+upper_woodprod_00_09_gCm2d <- woodprod_00_09_gCm2d+woodprod_00_09_gCm2d_unc
+lower_woodprod_10_16_gCm2d <- woodprod_10_16_gCm2d-woodprod_10_16_gCm2d_unc
+upper_woodprod_10_16_gCm2d <- woodprod_10_16_gCm2d+woodprod_10_16_gCm2d_unc
+
+lower_biommort_00_09_gCm2d <- biommort_00_09_gCm2d-biommort_00_09_gCm2d_unc
+upper_biommort_00_09_gCm2d <- biommort_00_09_gCm2d+biommort_00_09_gCm2d_unc
+lower_biommort_10_16_gCm2d <- biommort_10_16_gCm2d-biommort_10_16_gCm2d_unc
+upper_biommort_10_16_gCm2d <- biommort_10_16_gCm2d+biommort_10_16_gCm2d_unc
+
+
+```
+
+Compare CARDAMOM data with RAINFOR 
+```{r echo = FALSE, message=FALSE, fig.asp = 0.9, fig.width = 10}
+load("C:/Users/cnwobi/Documents/cssp_brazil/cssp_brazil_R/data/extracted_card.RData")
+
+woody_var<-c('Biomass','Woody NPP 2000/1-2009','Woody NPP 2010-2016','Woody Mortality 2000/1-2009','Woody Mortality 2010-2016')
+
+rainfor_dat <- c(formatC(cellStats(biomass_amazon_gCm2, 'mean'), format="f", big.mark=",", digits=0),
+formatC(cellStats(woodprod_00_09_gCm2d, 'mean'), format="f", big.mark=",", digits=2),
+formatC(cellStats(woodprod_10_16_gCm2d, 'mean'), format="f", big.mark=",", digits=2),
+formatC(cellStats(biommort_00_09_gCm2d, 'mean'), format="f", big.mark=",", digits=2),
+formatC(cellStats(biommort_10_16_gCm2d, 'mean'), format="f", big.mark=",", digits=2)
+)
+
+rainfor_dat_min <- c(formatC(cellStats(lower_biomass_amazon_gCm2,'mean'), format="f", big.mark=",", digits=0),
+                     formatC(cellStats(lower_woodprod_00_09_gCm2d,'mean'), format="f", big.mark=",", digits=2),
+                     formatC(cellStats(lower_woodprod_10_16_gCm2d,'mean'), format="f", big.mark=",", digits=2),
+                     formatC(cellStats(lower_biommort_00_09_gCm2d,'mean'), format="f", big.mark=",", digits=2),
+                     formatC(cellStats(lower_biommort_10_16_gCm2d,'mean'), format="f", big.mark=",", digits=2)
+                     )
+
+card_norainfor <- c(formatC(cellStats(cardamom_cwood_0110_mean,'mean'), format="f", big.mark=",", digits=0),
+                    formatC(cellStats(cardamom_nppwood_0109_mean,'mean'), format="f", digits=2),
+                    formatC(cellStats(cardamom_nppwood_1016_mean,'mean'), format="f", digits=2),
+                    formatC(cellStats(cardamom_outputwood_0109_mean,'mean'), format="f", digits=2),
+                    formatC(cellStats(cardamom_outputwood_1016_mean,'mean'), format="f", digits=2)
+                    )
+
+card_rainfor <- c(formatC(cellStats(cardamom_updated_rainfor_cwood_0110_mean,'mean'), format="f", big.mark=",", digits=0),
+                  formatC(cellStats(cardamom_updated_rainfor_nppwood_0110_mean,'mean'), format="f", digits=2),
+                  formatC(cellStats(cardamom_updated_rainfor_nppwood_1016_mean,'mean'), format="f", digits=2),
+                  formatC(cellStats(cardamom_updated_rainfor_outputwood_0110_mean,'mean'), format="f", digits=2),
+                  formatC(cellStats(cardamom_updated_rainfor_outputwood_1016_mean,'mean'), format="f", digits=2)
+                  )
+
+rainfor_dat_max <- c(formatC(cellStats(upper_biomass_amazon_gCm2,'mean'), format="f", big.mark=",", digits=0),
+                     formatC(cellStats(upper_woodprod_00_09_gCm2d,'mean'), format="f", big.mark=",", digits=2),
+                     formatC(cellStats(upper_woodprod_10_16_gCm2d,'mean'), format="f", big.mark=",", digits=2),
+                     formatC(cellStats(upper_biommort_00_09_gCm2d,'mean'), format="f", big.mark=",", digits=2),
+                     formatC(cellStats(upper_biommort_10_16_gCm2d,'mean'), format="f", big.mark=",", digits=2)
+                     )
+
+compare_rainfor_card_mean <- data.frame(woody_var,rainfor_dat,rainfor_dat_min,card_norainfor, card_rainfor,rainfor_dat_max)
+compare_rainfor_card_mean
+```
+

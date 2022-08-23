@@ -24,25 +24,31 @@ biomass_amazon <- brick('R://brazil_leeds_maps/AbovegroundBiomass_Mg_perHa_111km
 
 #convert from Mg_perHa_perYear to g_perM2_perDay
 thayr_to_gm2day_fun <- function(x) { x * (100/365.25) }
+thayr_to_gCm2day_fun <- function(x) { (x/2) * (100/365.25) }
+tha_to_gCm2_fun <- function(x) { (x/2) * 100 }
 
 woodprod_00_09_gm2d <- calc(woodprod_00_09, thayr_to_gm2day_fun)
 woodprod_10_16_gm2d <- calc(woodprod_10_16, thayr_to_gm2day_fun)
 biommort_00_09_gm2d <- calc(biommort_00_09, thayr_to_gm2day_fun)
 biommort_10_16_gm2d <- calc(biommort_10_16, thayr_to_gm2day_fun)
 
+biomass_amazon_gCm2 <- calc(biomass_amazon, tha_to_gCm2_fun)
+biomass_amazon_gCm2_card <- brick('G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg/wood_biomass/wood_biomass_gCm2.tif')
+npp_amazon_gCm2_card <- brick('G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg/wood_productivity/wood_productivity_gCm2_2000_2009.tif')
+
 #summary
 summary(woodprod_00_09)
 str(woodprod_00_09)
 
 #plots
-par(mfrow=c(2,2))
+par(mfrow=c(1,2))
 plot(woodprod_00_09,main='Woody Productivity 2000-2009 Mg/Ha/Year')
-plot(woodprod_10_16,main='Woody Productivity 2010-2016')
-plot(biommort_00_09,main='Biomass Mortality 2000-2009')
-plot(biommort_10_16,main='Biomass Mortality 2010-2016')
+plot(woodprod_10_16,main='Woody Productivity 2010-2016 Mg/Ha/Year')
+plot(biommort_00_09,main='Biomass Mortality 2000-2009 Mg/Ha/Year')
+plot(biommort_10_16,main='Biomass Mortality 2010-2016 Mg/Ha/Year')
 
 par(mfrow=c(1,1))
-plot(biomass_amazon,main='Leeds Aboveground Biomass')
+plot(biomass_amazon,main='Aboveground Biomass Mg/Ha')
 
 par(mfrow=c(2,2))
 plot(woodprod_00_09_gm2d,main='Woody Productivity 2000-2009 g/m2/day')
@@ -57,11 +63,11 @@ hist(biommort_10_16)
 hist(biomass_amazon)
 
 #mean(woodprod_00_09)
-cellStats(woodprod_00_09, 'mean');cellStats(woodprod_00_09, 'sd')
-cellStats(woodprod_10_16, 'mean');cellStats(woodprod_10_16, 'sd')
-cellStats(biommort_00_09, 'mean');cellStats(biommort_00_09, 'sd')
-cellStats(biommort_10_16, 'mean');cellStats(biommort_10_16, 'sd')
-cellStats(biomass_amazon, 'mean');cellStats(biomass_amazon, 'sd')
+cellStats(woodprod_00_09_gm2d, 'mean');cellStats(woodprod_00_09_gm2d, 'sd')
+cellStats(woodprod_10_16_gm2d, 'mean');cellStats(woodprod_10_16_gm2d, 'sd')
+cellStats(biommort_00_09_gm2d, 'mean');cellStats(biommort_00_09_gm2d, 'sd')
+cellStats(biommort_10_16_gm2d, 'mean');cellStats(biommort_10_16_gm2d, 'sd')
+cellStats(biomass_amazon_gCm2, 'mean');cellStats(biomass_amazon_gCm2, 'sd')
 
 ncell(woodprod_00_09)
 table(is.na(woodprod_10_16[]))
@@ -86,23 +92,67 @@ ggplot(stats_leeds_table_error) +
         panel.background = element_blank(), axis.line = element_line(colour = "black"))+ 
   theme(text = element_text(size = 20))
 
+#Cwood ESA source AGB----
+esa_cci_agb_17 <- brick('G://AGB/ESA_CCI_BIOMASS/ESA_CCI_AGB_1deg/AGB_map_MgCha_2017.tif')
+plot(esa_cci_agb_17)
+esa_cci_agb_17_amazon <- crop(esa_cci_agb_17, extent(cardamom_benchmarknppwood_1101))
+plot(esa_cci_agb_17_amazon)
 
+check_extent <- extent(esa_cci_agb_17_amazon) #use south america extent from INLAND SA
+check_extent_r <- raster(check_extent)
+res(check_extent_r) <- res(esa_cci_agb_17_amazon)
+values(check_extent_r) <- 1
+crs(check_extent_r) <- "+proj=longlat +datum=WGS84 +no_defs"
+check_extent_r_amazonia <- mask(check_extent_r, amazonia_poly, updatevalue=0)
+check_extent_r_amazonia[check_extent_r_amazonia<1] <- NA
+
+esa_cci_agb_17_amazon_masked <- mask(esa_cci_agb_17_amazon, check_extent_r_amazonia)
+
+esa_cci_agb_17_amazon_masked <- tha_to_gm2_fun(esa_cci_agb_17_amazon_masked)
+
+
+
+#done
 #models----
-nc_card <- nc_open('G://CARDAMOM_ILAMB/CARDAMOM_Brazil_1x1_2001_2017_v1.0.nc')
-print(nc_card) #print properties
-nc_close(nc_card) #close nc file
+#CARDAMOM
+cardamom_benchmarknppwood <- stack('R://ILAMB_beta_devel/RAINFOR_leeds_run/cssp_brazil_amazon_run/MODELS/CARDAMOM_NORAINFOR/NoRainfor_Amazon_1deg_monthly_2001_2019.nc',varname="WOOD")
+#class(getZ(cardamom_benchmarknppwood))
+#plot(cardamom_benchmarknppwood$X2001.01.01)
+#names(cardamom_benchmarknppwood)
+cardamom_benchmarknppwood_masked_01_16_mean <- stackApply(cardamom_benchmarknppwood, indices =  rep(1,nlayers(cardamom_benchmarknppwood)), fun = "mean")
+cellStats(cardamom_benchmarknppwood_masked_01_16_mean, 'mean');cellStats(cardamom_benchmarknppwood_masked_01_16_mean, 'sd')
 
-#G://ILAMB_runs_output/CSSP_stippling/DATA/benchmark/CARDAMOM_monthly_1x1_SAmerica.nc
-#G://ILAMB_runs_output/JULES_ORIG/JULES_modeldata_monthly.nc
-#G://ILAMB_runs_output/INLAND_ORIG/INLAND_modeldata.nc
-#G://CARDAMOM_Brazil/processed/20200924/Brazil_1deg_monthly_nopotAGB_2001_2017.nc
-#G://ILAMBbeta/ILAMB_beta_tutorial/MODELS/INLAND/INLAND.nc
-#G://CARDAMOM_ILAMB/CARDAMOM_Brazil_1x1_2001_2017_v1.0.nc
+cardamom_benchmarknppwood_1101<-cardamom_benchmarknppwood$X2001.01.01 #template to get data ignore values (green in plot of previous step)
+# cardamom_nppwood_1101[cardamom_nppwood_1101 > 500000] <- NA #ignore values above 500000
+# plot(cardamom_nppwood_1101) #view masked out values
+
+#cardamom_nppwood_masked <- mask(cardamom_nppwood, cardamom_nppwood_1101) #mask out data ignore values
+#plot(cardamom_nppwood_masked$X2001.01.01) #check successful masking
+
+#extract raster images of two periods of interest
+cardamom_benchmarknppwood_masked_01_10 <- cardamom_benchmarknppwood[[which(getZ(cardamom_benchmarknppwood) >= as.Date("2001-01-01") & getZ(cardamom_benchmarknppwood) <= as.Date("2009-12-01"))]]
+cardamom_benchmarknppwood_masked_10_16 <- cardamom_benchmarknppwood[[which(getZ(cardamom_benchmarknppwood) >= as.Date("2010-01-01") & getZ(cardamom_benchmarknppwood) <= as.Date("2016-12-01"))]]
+
+#calculate mean over time
+cardamom_benchmarknppwood_masked_01_10_mean <- stackApply(cardamom_benchmarknppwood_masked_01_10, indices =  rep(1,nlayers(cardamom_benchmarknppwood_masked_01_10)), fun = "mean")
+cardamom_benchmarknppwood_masked_10_16_mean <- stackApply(cardamom_benchmarknppwood_masked_10_16, indices =  rep(1,nlayers(cardamom_benchmarknppwood_masked_10_16)), fun = "mean")
+#plot(cardamom_benchmarknppwood_masked_01_10_mean)
+#plot(cardamom_benchmarknppwood_masked_10_16_mean)
+
+#visualize mean NPP flux over two periods
+#par(mfrow=c(1,2))
+#plot(cardamom_benchmarknppwood_masked_01_10_mean,main='CARDAMOM NPP flux for wood 2001-2009 g/m2/day')
+#plot(cardamom_benchmarknppwood_masked_10_16_mean,main='CARDAMOM NPP flux for wood 2010-2016')
+
+#calculate spatial statistics (mean, sd) of two periods 
+cellStats(cardamom_benchmarknppwood_masked_01_10_mean, 'mean');cellStats(cardamom_benchmarknppwood_masked_01_10_mean, 'sd')
+cellStats(cardamom_benchmarknppwood_masked_10_16_mean, 'mean');cellStats(cardamom_benchmarknppwood_masked_10_16_mean, 'sd')
 
 #extract NPP flux variable and convert to rasterer
-cardamom_nppwood <- stack('G://CARDAMOM_ILAMB/CARDAMOM_Brazil_1x1_2001_2017_v1.0.nc',varname="NPP_wood_flx")
+cardamom_nppwood <- stack('R://ILAMB_beta_devel/RAINFOR_leeds_run/cssp_brazil_amazon_run/MODELS/CARDAMOM_NORAINFOR/NoRainfor_Amazon_1deg_monthly_2001_2019.nc',varname="OUTPUT_wood_flx")
 class(getZ(cardamom_nppwood))
 plot(cardamom_nppwood$X2001.01.01)
+names(cardamom_nppwood)
 
 cardamom_nppwood_1101<-cardamom_nppwood$X2001.01.01 #template to get data ignore values (green in plot of previous step)
 cardamom_nppwood_1101[cardamom_nppwood_1101 > 500000] <- NA #ignore values above 500000
@@ -112,12 +162,14 @@ cardamom_nppwood_masked <- mask(cardamom_nppwood, cardamom_nppwood_1101) #mask o
 plot(cardamom_nppwood_masked$X2001.01.01) #check successful masking
 
 #extract raster images of two periods of interest
-cardamom_nppwood_masked_01_10 <- cardamom_nppwood_masked[[which(getZ(cardamom_nppwood_masked) >= as.Date("2001-01-01") & getZ(cardamom_nppwood_masked) <= as.Date("2009-12-01"))]]
-cardamom_nppwood_masked_10_16 <- cardamom_nppwood_masked[[which(getZ(cardamom_nppwood_masked) >= as.Date("2010-01-01") & getZ(cardamom_nppwood_masked) <= as.Date("2016-12-01"))]]
+cardamom_nppwood_masked_01_10 <- cardamom_nppwood[[which(getZ(cardamom_nppwood) >= as.Date("2001-01-01") & getZ(cardamom_nppwood) <= as.Date("2009-12-01"))]]
+cardamom_nppwood_masked_10_16 <- cardamom_nppwood[[which(getZ(cardamom_nppwood) >= as.Date("2010-01-01") & getZ(cardamom_nppwood) <= as.Date("2016-12-01"))]]
 
 #calculate mean over time
 cardamom_nppwood_masked_01_10_mean <- stackApply(cardamom_nppwood_masked_01_10, indices =  rep(1,nlayers(cardamom_nppwood_masked_01_10)), fun = "mean")
 cardamom_nppwood_masked_10_16_mean <- stackApply(cardamom_nppwood_masked_10_16, indices =  rep(1,nlayers(cardamom_nppwood_masked_10_16)), fun = "mean")
+plot(cardamom_nppwood_masked_01_10_mean)
+plot(cardamom_nppwood_masked_10_16_mean)
 
 #visualize mean NPP flux over two periods
 par(mfrow=c(1,2))
@@ -134,6 +186,39 @@ cellStats(cardamom_nppwood_masked_10_16_mean, 'mean');cellStats(cardamom_nppwood
 # cardamom_nppwood_01_10_indices <- as.numeric(format(as.Date(names(cardamom_nppwood_01_10), format = "X%Y.%m.%d"), format = "%Y"))
 # cardamom_nppwood_01_10_mean <- stackApply(cardamom_nppwood_01_10, cardamom_nppwood_01_10_indices, fun = mean)
 # plot(cardamom_nppwood_01_10_mean$index_2001)
+
+#JULES
+jules_nppwood <- stack('R://ILAMB_beta_devel/RAINFOR_leeds_run/cssp_brazil_amazon_run/MODELS/JULES/JULES_monthly_1x1_Amazon_combined_2001_2019.nc',varname="OUTPUT_wood_flx")
+class(getZ(jules_nppwood))
+plot(jules_nppwood$X2001.01.01)
+names(jules_nppwood)
+
+jules_nppwood_1101<-jules_nppwood$X2001.01.01 #template to get data ignore values (green in plot of previous step)
+jules_nppwood_1101[jules_nppwood_1101 > 500000] <- NA #ignore values above 500000
+plot(jules_nppwood_1101) #view masked out values
+
+extent(jules_nppwood)<-extent(cardamom_nppwood_1101)
+jules_nppwood_masked <- mask(jules_nppwood, cardamom_nppwood_1101) #mask out data ignore values
+plot(jules_nppwood_masked$X2001.01.01) #check successful masking
+
+#extract raster images of two periods of interest
+jules_nppwood_masked_01_10 <- jules_nppwood_masked[[which(getZ(jules_nppwood_masked) >= as.Date("2001-01-01") & getZ(jules_nppwood_masked) <= as.Date("2009-12-01"))]]
+jules_nppwood_masked_10_16 <- jules_nppwood_masked[[which(getZ(jules_nppwood_masked) >= as.Date("2010-01-01") & getZ(jules_nppwood_masked) <= as.Date("2016-12-01"))]]
+
+#calculate mean over time
+jules_nppwood_masked_01_10_mean <- stackApply(jules_nppwood_masked_01_10, indices =  rep(1,nlayers(jules_nppwood_masked_01_10)), fun = "mean")
+jules_nppwood_masked_10_16_mean <- stackApply(jules_nppwood_masked_10_16, indices =  rep(1,nlayers(jules_nppwood_masked_10_16)), fun = "mean")
+plot(jules_nppwood_masked_01_10_mean)
+plot(jules_nppwood_masked_10_16_mean)
+
+#visualize mean NPP flux over two periods
+par(mfrow=c(1,2))
+plot(jules_nppwood_masked_01_10_mean,main='jules NPP flux for wood 2001-2009 g/m2/day')
+plot(jules_nppwood_masked_10_16_mean,main='jules NPP flux for wood 2010-2016')
+
+#calculate spatial statistics (mean, sd) of two periods 
+cellStats(jules_nppwood_masked_01_10_mean, 'mean');cellStats(jules_nppwood_masked_01_10_mean, 'sd')
+cellStats(jules_nppwood_masked_10_16_mean, 'mean');cellStats(jules_nppwood_masked_10_16_mean, 'sd')
 
 #extract MTT wood variable and convert to rasterer
 cardamom_mttwood <- stack('G://CARDAMOM_ILAMB/CARDAMOM_Brazil_1x1_2001_2017_v1.0.nc',varname="MTT_wood")
@@ -522,7 +607,7 @@ attributes(nc_inland$var)$names[17]
 #attributes(nc_inland$var)$names[17]
 ncatt_get(nc_inland, attributes(nc_inland$var)$names[17])
 
-ncatt_put( nc_inland, "npptot", "units", "g.m-2.d-1")
+ncatt_put(nc_inland, "npptot", "units", "g.m-2.d-1")
 
 old_varname <-'npptote'
 new_varname <- 'npptot'
