@@ -25,9 +25,9 @@ extract_subset <- function (region,reference){
   return(data_region)
 }
 
-amazonia_subset_raster<-extract_subset(amazonia_subset,biomass_amazon_gCm2)
+#amazonia_subset_raster<-extract_subset(amazonia_subset,biomass_amazon_gCm2)
 #plot(amazonia_subset_raster)
-writeRaster(amazonia_subset_raster, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazonia_subset.tif", format = "GTiff")
+#writeRaster(amazonia_subset_raster, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazonia_subset.tif", format = "GTiff")
 
 #done
 ######function to extract country amazon regions#######
@@ -85,7 +85,7 @@ reg_card_var_2 <- function(s,s2,cardamom_variables){
   
   return(na.omit(cbind(gpp_reg_data,lai_reg_data,cica_reg_data,gsdsr_reg_data,apar_reg_data,et_reg_data,region_name,date,month,year)))
 }
-#nw_data <- reg_card_var_2(reg_data[[1]],reg_names[1],var_names)
+amazonia_data <- reg_card_var_2(reg_data[[6]],reg_names[6],var_names)
 #nrow(nw_data)
 
 card_var_2 <- function(s2,cardamom_variables){

@@ -20,7 +20,7 @@ library(ncdf4); library(raster); library(dplyr);library(ggrepel);library(ggplot2
 1.1: `all_pixels_compare_data_zero` is a table of gpp, lai, et, gsdsr, apar and cica extracted from every pixel across the amazon and 5 regions over monthly time scale between 2001 and 2019
 ```{r echo = FALSE, message=FALSE}
 options(width = 100)
-all_pixels_compare_data_zero <- readRDS("C:/Users/cnwobi/Documents/cssp_brazil/cssp_brazil_R/data/extracted_variables.RDS")
+all_pixels_compare_data_zero <- readRDS("R:/cssp_brazil/cssp_brazil_R/data/extracted_variables.RDS")
 summary(all_pixels_compare_data_zero)
 str(all_pixels_compare_data_zero)
 head(all_pixels_compare_data_zero)
@@ -55,48 +55,61 @@ plot.ts(amazonia_mean_all_pixels_compare_data_zero_ts[,c(3:8)],main = "Amazonia"
 mnthly_mean_data_nw<-scale(mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_nw',c(3:8)])
 mnthly_mean_data_nw <- as.data.frame(mnthly_mean_data_nw)
 mnthly_mean_data_nw$mnth<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_nw',]$month_f
-mnthly_mean_data_nw <- as.data.frame(melt(mnthly_mean_data_nw, id.vars ='mnth'))
+mnthly_mean_data_nw_all <- as.data.frame(mnthly_mean_data_nw)
+mnthly_mean_data_nw_all$region_name<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_nw',]$region_name
+mnthly_mean_data_nw <- as.data.frame(melt(mnthly_mean_data_nw[,c(1:3,5,7)], id.vars ='mnth'))
 
 mnthly_mean_data_sw <- scale(mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_sw',c(3:8)])
 mnthly_mean_data_sw <- as.data.frame(mnthly_mean_data_sw)
 mnthly_mean_data_sw$mnth<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_sw',]$month_f
-mnthly_mean_data_sw <- as.data.frame(melt(mnthly_mean_data_sw , id.vars ='mnth'))
+mnthly_mean_data_sw_all <- as.data.frame(mnthly_mean_data_sw)
+mnthly_mean_data_sw_all$region_name<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_sw',]$region_name
+mnthly_mean_data_sw <- as.data.frame(melt(mnthly_mean_data_sw[,c(1:3,5,7)], id.vars ='mnth'))
 
 mnthly_mean_data_ec <- scale(mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_ec',c(3:8)])
 mnthly_mean_data_ec <- as.data.frame(mnthly_mean_data_ec)
 mnthly_mean_data_ec$mnth<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_ec',]$month_f
-mnthly_mean_data_ec <- as.data.frame(melt(mnthly_mean_data_ec , id.vars ='mnth'))
+mnthly_mean_data_ec_all <- as.data.frame(mnthly_mean_data_ec)
+mnthly_mean_data_ec_all$region_name<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_ec',]$region_name
+mnthly_mean_data_ec <- as.data.frame(melt(mnthly_mean_data_ec[,c(1:3,5,7)], id.vars ='mnth'))
 
 mnthly_mean_data_bs <- scale(mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_bs',c(3:8)])
 mnthly_mean_data_bs <- as.data.frame(mnthly_mean_data_bs)
 mnthly_mean_data_bs$mnth<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_bs',]$month_f
-mnthly_mean_data_bs <- as.data.frame(melt(mnthly_mean_data_bs , id.vars ='mnth'))
+mnthly_mean_data_bs_all <- as.data.frame(mnthly_mean_data_bs)
+mnthly_mean_data_bs_all$region_name<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_bs',]$region_name
+mnthly_mean_data_bs <- as.data.frame(melt(mnthly_mean_data_bs[,c(1:3,5,7)], id.vars ='mnth'))
 
 mnthly_mean_data_gs <- scale(mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_gs',c(3:8)])
 mnthly_mean_data_gs <- as.data.frame(mnthly_mean_data_gs)
 mnthly_mean_data_gs$mnth<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_gs',]$month_f
-mnthly_mean_data_gs <- as.data.frame(melt(mnthly_mean_data_gs , id.vars ='mnth'))
+mnthly_mean_data_gs_all <- as.data.frame(mnthly_mean_data_gs)
+mnthly_mean_data_gs_all$region_name<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazon_gs',]$region_name
+mnthly_mean_data_gs <- as.data.frame(melt(mnthly_mean_data_gs[,c(1:3,5,7)], id.vars ='mnth'))
 
 mnthly_mean_data_amazonia <- scale(mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazonia',c(3:8)])
 mnthly_mean_data_amazonia <- as.data.frame(mnthly_mean_data_amazonia)
 mnthly_mean_data_amazonia$mnth<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazonia',]$month_f
-mnthly_mean_data_amazonia <- as.data.frame(melt(mnthly_mean_data_amazonia , id.vars ='mnth'))
+mnthly_mean_data_amazonia_all <- as.data.frame(mnthly_mean_data_amazonia)
+mnthly_mean_data_amazonia_all$region_name<-mnthly_all_pixels_compare_data_zero[mnthly_all_pixels_compare_data_zero$region_name=='amazonia',]$region_name
+mnthly_mean_data_amazonia <- as.data.frame(melt(mnthly_mean_data_amazonia[,c(1:3,5,7)], id.vars ='mnth'))
+
+mnthly_mean_data_all_2 <- bind_rows(mnthly_mean_data_nw_all,mnthly_mean_data_sw_all,mnthly_mean_data_ec_all,mnthly_mean_data_bs_all,mnthly_mean_data_gs_all,mnthly_mean_data_amazonia_all)
 
 mnthly_mean_data_all <- scale(mnthly_all_pixels_compare_data_zero[,c(3:8)])
 mnthly_mean_data_all <- as.data.frame(mnthly_mean_data_all)
 mnthly_mean_data_all$region_name <-mnthly_all_pixels_compare_data_zero$region_name 
 mnthly_mean_data_all$mnth<-mnthly_all_pixels_compare_data_zero$month_f
-mnthly_mean_data_all <- as.data.frame(melt(mnthly_mean_data_all , id.vars ='mnth'))
 
 mnthly_mean_data_nw%>%
   mutate(label = if_else(mnth == 'Dec', as.character(variable), NA_character_)) %>%
   ggplot(aes(mnth,value,group=variable))+
   labs(title="Monthly Mean of Normalised Variable over North West Amazonia",x="Month", y = "Normalized Values") +
-  geom_line(aes(colour = variable),size=2)+ 
-  geom_label_repel(aes(label = label),nudge_x = 1,na.rm = TRUE) +
+  geom_line(aes(colour = variable),size=4)+ 
+  geom_label_repel(aes(label = label),nudge_x = 2,na.rm = TRUE,size=5) +
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),legend.position='none')
 mnthly_mean_data_sw%>%
   mutate(label = if_else(mnth == 'Dec', as.character(variable), NA_character_)) %>%
   ggplot(aes(mnth,value,group=variable))+
@@ -105,7 +118,7 @@ mnthly_mean_data_sw%>%
   geom_label_repel(aes(label = label),nudge_x = 1,na.rm = TRUE) +
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),legend.position='none')
 mnthly_mean_data_ec%>%
   mutate(label = if_else(mnth == 'Dec', as.character(variable), NA_character_)) %>%
   ggplot(aes(mnth,value,group=variable))+
@@ -114,16 +127,16 @@ mnthly_mean_data_ec%>%
   geom_label_repel(aes(label = label),nudge_x = 1,na.rm = TRUE) +
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),legend.position='none')
 mnthly_mean_data_bs%>%
   mutate(label = if_else(mnth == 'Dec', as.character(variable), NA_character_)) %>%
   ggplot(aes(mnth,value,group=variable))+
   labs(title="Monthly Mean of Normalised Variable over the Brazillian Shield",x="Month", y = "Normalized Values") +
-  geom_line(aes(colour = variable),size=2)+ 
-  geom_label_repel(aes(label = label),nudge_x = 1,na.rm = TRUE) +
+  geom_line(aes(colour = variable),size=4)+ 
+  geom_label_repel(aes(label = label),nudge_x = 1,na.rm = TRUE,size=5) +
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),legend.position='none')
 mnthly_mean_data_gs%>%
   mutate(label = if_else(mnth == 'Dec', as.character(variable), NA_character_)) %>%
   ggplot(aes(mnth,value,group=variable))+
@@ -132,96 +145,216 @@ mnthly_mean_data_gs%>%
   geom_label_repel(aes(label = label),nudge_x = 1,na.rm = TRUE) +
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),legend.position='none')
 mnthly_mean_data_amazonia%>%
   mutate(label = if_else(mnth == 'Dec', as.character(variable), NA_character_)) %>%
   ggplot(aes(mnth,value,group=variable))+
   labs(title="Monthly Mean of Normalised Variable over Amazonia",x="Month", y = "Normalized Values") +
-  geom_line(aes(colour = variable),size=2)+ 
-  geom_label_repel(aes(label = label),nudge_x = 1,na.rm = TRUE) +
+  geom_line(aes(colour = variable),size=4)+ 
+  geom_label_repel(aes(label = label),nudge_x = 1,na.rm = TRUE,size=5) +
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),legend.position='none')
 mnthly_mean_data_all%>%
-  mutate(label = if_else(mnth == 'Dec', as.character(variable), NA_character_)) %>%
-  ggplot(aes(mnth,value,group=variable))+
-  labs(title="Monthly Mean of Normalised Variable over Amazonia",x="Month", y = "Normalized Values") +
-  geom_line(aes(colour = variable),size=2)+ 
-  geom_label_repel(aes(label = label),nudge_x = 1,na.rm = TRUE) +
-  theme_bw() + 
+  mutate(label = if_else(mnth == 'Dec', as.character(region_name), NA_character_)) %>%
+  ggplot(aes(mnth,gpp,group=region_name))+
+  labs(title="Monthly Mean of Normalised GPP over Amazonia",x="Month", y = "Normalized Values") +
+  geom_line(aes(colour = region_name),size=3)+
+  geom_label_repel(aes(label = label),nudge_x = 1,na.rm = TRUE,size=4) +
+  theme_bw() +
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+mnthly_mean_data_all_2%>%
+  mutate(label = if_else(mnth == 'Dec', as.character(region_name), NA_character_)) %>%
+  ggplot(aes(mnth,gpp,group=region_name))+
+  labs(title="Monthly Mean of Normalised GPP over Amazonia",x="Month", y = "Normalized Values") +
+  geom_line(aes(colour = region_name),size=3)+
+  geom_label_repel(aes(label = label),nudge_x =2,na.rm = TRUE,size=4) +
+  theme_bw() +
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 ```
+1.4: Standardize all data
+```{r echo = FALSE, message=FALSE, fig.asp = 0.8, fig.width = 10}
+all_pixels_compare_data_zero_nw<-scale(all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_nw',c(1:6)])
+all_pixels_compare_data_zero_nw <- as.data.frame(all_pixels_compare_data_zero_nw)
+all_pixels_compare_data_zero_nw$mnth<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_nw',]$month_f
+all_pixels_compare_data_zero_nw_scale <- as.data.frame(all_pixels_compare_data_zero_nw)
+all_pixels_compare_data_zero_nw_scale$region_name<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_nw',]$region_name
 
-2.1: First, lm plots of various variable combinations for every region over the time period 
-```{r echo = FALSE, message=FALSE, fig.asp = 0.8, fig.width = 7}
-all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+all_pixels_compare_data_zero_sw <- scale(all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_sw',c(1:6)])
+all_pixels_compare_data_zero_sw <- as.data.frame(all_pixels_compare_data_zero_sw)
+all_pixels_compare_data_zero_sw$mnth<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_sw',]$month_f
+all_pixels_compare_data_zero_sw_scale <- as.data.frame(all_pixels_compare_data_zero_sw)
+all_pixels_compare_data_zero_sw_scale$region_name<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_sw',]$region_name
+
+all_pixels_compare_data_zero_ec <- scale(all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_ec',c(1:6)])
+all_pixels_compare_data_zero_ec <- as.data.frame(all_pixels_compare_data_zero_ec)
+all_pixels_compare_data_zero_ec$mnth<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_ec',]$month_f
+all_pixels_compare_data_zero_ec_scale <- as.data.frame(all_pixels_compare_data_zero_ec)
+all_pixels_compare_data_zero_ec_scale$region_name<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_ec',]$region_name
+
+all_pixels_compare_data_zero_bs <- scale(all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_bs',c(1:6)])
+all_pixels_compare_data_zero_bs <- as.data.frame(all_pixels_compare_data_zero_bs)
+all_pixels_compare_data_zero_bs$mnth<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_bs',]$month_f
+all_pixels_compare_data_zero_bs_scale <- as.data.frame(all_pixels_compare_data_zero_bs)
+all_pixels_compare_data_zero_bs_scale$region_name<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_bs',]$region_name
+
+all_pixels_compare_data_zero_gs <- scale(all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_gs',c(1:6)])
+all_pixels_compare_data_zero_gs <- as.data.frame(all_pixels_compare_data_zero_gs)
+all_pixels_compare_data_zero_gs$mnth<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_gs',]$month_f
+all_pixels_compare_data_zero_gs_scale <- as.data.frame(all_pixels_compare_data_zero_gs)
+all_pixels_compare_data_zero_gs_scale$region_name<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazon_gs',]$region_name
+
+all_pixels_compare_data_zero_amazonia <- scale(all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazonia',c(1:6)])
+all_pixels_compare_data_zero_amazonia <- as.data.frame(all_pixels_compare_data_zero_amazonia)
+all_pixels_compare_data_zero_amazonia$mnth<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazonia',]$month_f
+all_pixels_compare_data_zero_amazonia_scale <- as.data.frame(all_pixels_compare_data_zero_amazonia)
+all_pixels_compare_data_zero_amazonia_scale$region_name<-all_pixels_compare_data_zero[all_pixels_compare_data_zero$region_name=='amazonia',]$region_name
+
+all_pixels_compare_data_zero_scale <- bind_rows(all_pixels_compare_data_zero_nw_scale,all_pixels_compare_data_zero_sw_scale,all_pixels_compare_data_zero_ec_scale,all_pixels_compare_data_zero_bs_scale,all_pixels_compare_data_zero_gs_scale,all_pixels_compare_data_zero_amazonia_scale)
+
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
   ggplot(aes(x=cica, 
              y=gpp, 
              colour = region_name))+
   geom_point(alpha = 1/20)+
   labs(title="Plot of GPP against CiCa",x="CiCa", y = "GPP (gC/m2/day)")+
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
-all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
   ggplot(aes(x=lai, 
              y=gpp, 
              colour = region_name))+
   geom_point(alpha = 1/20)+
   labs(title="Plot of GPP against LAI",x="LAI", y = "GPP (gC/m2/day)")+
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
-all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
   ggplot(aes(x=gsdsr, 
              y=gpp, 
              colour = region_name))+
   geom_point(alpha = 1/20)+
   labs(title="Plot of GPP against gs demand:supply",x="GSDSR", y = "GPP (gC/m2/day)")+
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
-all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
   ggplot(aes(x=apar, 
              y=gpp, 
              colour = region_name))+
   geom_point(alpha = 1/20)+
   labs(title="Plot of GPP against APAR",x="APAR (MJ/m2/day)", y = "GPP (gC/m2/day)")+
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
-all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
   ggplot(aes(x=et, 
              y=gpp, 
              colour = region_name))+
   geom_point(alpha = 1/20)+
   labs(title="Plot of GPP against against Evapotranspiration",x="ET (kgH20/m2/day)", y = "GPP (gC/m2/day)")+
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
-all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
   ggplot(aes(x=apar, 
              y=cica, 
              colour = region_name))+
   geom_point(alpha = 1/20)+
   labs(title="Plot of CiCa against APAR",x="APAR (MJ/m2/day)", y = "CiCa")+
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+```
+2.1: First, lm plots of various variable combinations for every region over the time period 
+```{r echo = FALSE, message=FALSE, fig.asp = 0.8, fig.width = 7}
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
+  ggplot(aes(x=cica, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against CiCa",x="CiCa", y = "GPP (gC/m2/day)")+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
+  ggplot(aes(x=lai, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against LAI",x="LAI", y = "GPP (gC/m2/day)")+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
+  ggplot(aes(x=gsdsr, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against gs demand:supply",x="GSDSR", y = "GPP (gC/m2/day)")+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
+  ggplot(aes(x=apar, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against APAR",x="APAR (MJ/m2/day)", y = "GPP (gC/m2/day)")+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
+  ggplot(aes(x=et, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against against Evapotranspiration",x="ET (kgH20/m2/day)", y = "GPP (gC/m2/day)")+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+all_pixels_compare_data_zero_scale[!all_pixels_compare_data_zero_scale$region_name=='amazonia',] %>%
+  ggplot(aes(x=apar, 
+             y=cica, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of CiCa against APAR",x="APAR (MJ/m2/day)", y = "CiCa")+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
   theme_bw() + 
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
@@ -234,7 +367,7 @@ all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazoni
 ggplot(all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',], aes(cica, gpp, colour = region_name)) +
   geom_point(alpha = 1/20)+
   labs(title="Plot of Gross Primary Productivity against CiCa",x="CiCa", y = "GPP (gC/m2/day)") +
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*"))) +
   facet_wrap(.~month_f)+
   theme_bw() + 
@@ -244,7 +377,7 @@ ggplot(all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='
 ggplot(all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',], aes(lai, gpp, colour = region_name)) +
   geom_point(alpha = 1/20)+
   labs(title="Plot of Gross Primary Productivity against Leaf Area Index",x="LAI (m2/m2)", y = "GPP (gC/m2/day)") +
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*"))) +
   facet_wrap(.~month_f)+
   theme_bw() + 
@@ -254,7 +387,7 @@ ggplot(all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='
 ggplot(all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',], aes(gsdsr, gpp, colour = region_name)) +
   geom_point(alpha = 1/20)+
   labs(title="Plot of Gross Primary Productivity against gs demand:supply",x="GSDSR", y = "GPP (gC/m2/day)") +
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*"))) +
   facet_wrap(.~month_f)+
   theme_bw() + 
@@ -264,7 +397,7 @@ ggplot(all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='
 ggplot(all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',], aes(apar, gpp, colour = region_name)) +
   geom_point(alpha = 1/20)+
   labs(title="Plot of Gross Primary Productivity against APAR",x="APAR (MJ/m2/day)", y = "GPP (gC/m2/day)") +
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*"))) +
   facet_wrap(.~month_f)+
   theme_bw() + 
@@ -274,7 +407,7 @@ ggplot(all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='
 ggplot(all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',], aes(et, gpp, colour = region_name)) +
   geom_point(alpha = 1/20)+
   labs(title="Plot of Gross Primary Productivity against Evapotranspiration",x="ET (kgH20/m2/day)", y = "GPP (gC/m2/day)") +
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*"))) +
   facet_wrap(.~month_f)+
   theme_bw() + 
@@ -284,7 +417,7 @@ ggplot(all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='
 ggplot(all_pixels_compare_data_zero[!all_pixels_compare_data_zero$region_name=='amazonia',], aes(apar, cica, colour = region_name)) +
   geom_point(alpha = 1/20)+
   labs(title="Plot of CiCa against APAR",x="APAR (MJ/m2/day)", y = "CiCa") +
-  stat_poly_line()+
+  stat_poly_line(se = FALSE)+
   stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*"))) +
   facet_wrap(.~month_f)+
   theme_bw() + 
@@ -357,6 +490,181 @@ all_pixels_compare_data_zero %>%
 
 ```
 
+2.4: lm plots of various monthly mean variable combinations for every region
+```{r echo = FALSE, message=FALSE, fig.asp = 0.8, fig.width = 7}
+mnthly_all_pixels_compare_data_zero[!mnthly_all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+  ggplot(aes(x=cica, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against CiCa",x="CiCa", y = "GPP (gC/m2/day)")+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_all_pixels_compare_data_zero[!mnthly_all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+  ggplot(aes(x=lai, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against LAI",x="LAI", y = "GPP (gC/m2/day)")+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_all_pixels_compare_data_zero[!mnthly_all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+  ggplot(aes(x=gsdsr, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against gs demand:supply",x="GSDSR", y = "GPP (gC/m2/day)")+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_all_pixels_compare_data_zero[!mnthly_all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+  ggplot(aes(x=apar, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against APAR",x="APAR (MJ/m2/day)", y = "GPP (gC/m2/day)")+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_all_pixels_compare_data_zero[!mnthly_all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+  ggplot(aes(x=et, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against against Evapotranspiration",x="ET (kgH20/m2/day)", y = "GPP (gC/m2/day)")+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_all_pixels_compare_data_zero[!mnthly_all_pixels_compare_data_zero$region_name=='amazonia',] %>%
+  ggplot(aes(x=apar, 
+             y=cica, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of CiCa against APAR",x="APAR (MJ/m2/day)", y = "CiCa")+
+  stat_poly_line(se = FALSE)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")))+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+```
+
+2.5: lm plots of various monthly mean variable combinations for every region on scaled date
+```{r echo = FALSE, message=FALSE, fig.asp = 0.8, fig.width = 7}
+mnthly_mean_data_all_2 %>%
+  ggplot(aes(x=cica, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against CiCa",x="CiCa", y = "GPP",size=5)+
+  stat_poly_line(se = FALSE,size=2)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")),size=5)+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_mean_data_all_2 %>%
+  ggplot(aes(x=lai, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against LAI",x="LAI", y = "GPP",size=5)+
+  stat_poly_line(se = FALSE,size=2)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")),size=5)+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_mean_data_all_2 %>%
+  ggplot(aes(x=gsdsr, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against gs demand:supply",x="GSDSR", y = "GPP",size=5)+
+  stat_poly_line(se = FALSE,size=2)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")),size=5)+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_mean_data_all_2 %>%
+  ggplot(aes(x=apar, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against APAR",x="APAR", y = "GPP",size=5)+
+  stat_poly_line(se = FALSE,size=2)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")),size=5)+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_mean_data_all_2 %>%
+  ggplot(aes(x=et, 
+             y=gpp, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GPP against against Evapotranspiration",x="ET", y = "GPP",size=5)+
+  stat_poly_line(se = FALSE,size=2)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")),size=5)+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_mean_data_all_2 %>%
+  ggplot(aes(x=apar, 
+             y=cica, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of CiCa against APAR",x="APAR", y = "CiCa",size=5)+
+  stat_poly_line(se = FALSE,size=2)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")),size=5)+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_mean_data_all_2 %>%
+  ggplot(aes(x=et, 
+             y=gsdsr, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GSDSR against ET",x="ET", y = "GSDSR",size=5)+
+  stat_poly_line(se = FALSE,size=2)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")),size=5)+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+mnthly_mean_data_all_2 %>%
+  ggplot(aes(x=cica, 
+             y=gsdsr, 
+             colour = region_name))+
+  geom_point(alpha = 1/20)+
+  labs(title="Plot of GSDSR against CiCa",x="CiCa", y = "GSDSR",size=5)+
+  stat_poly_line(se = FALSE,size=2)+
+  stat_poly_eq(aes(label = paste(after_stat(rr.label), sep = "*\", \"*")),size=5)+
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+```
 3.1: Third, hexbin plots of various variable combinations for every region over the time period 
 ```{r echo = FALSE, message=FALSE, fig.asp = 0.8, fig.width = 10}
 ggplot(all_pixels_compare_data_zero, aes(cica, gpp)) +

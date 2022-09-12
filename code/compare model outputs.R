@@ -75,7 +75,7 @@ cardamom_outputwood_extract<- extract_var_mean(amazonia,cardamom_outputwood,biom
 cardamom_outputwood_0109_mean<-cardamom_outputwood_extract[[1]]
 cardamom_outputwood_1016_mean<-cardamom_outputwood_extract[[2]]
 
-##subset
+##subset----
 amazonia_subset <- shapefile("./data/amazonia_subset.shp")
 
 cardamom_norainfor_cwood_0110_mean_subset<-extract_var_mean_biom(amazonia_subset,cardamom_cwood,biomass_amazon_gCm2)
@@ -172,19 +172,19 @@ biommort_10_16_gCm2d
 # Write back out with new name and units etc
 writeRaster(biomass_amazon_gCm2, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_biomass/wood_biomass_gCm2.tif", format = "GTiff")
 # Write an estimate of the uncertainty back out
-writeRaster(biomass_amazon_gCm2*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_biomass/unc_wood_biomass_gCm2.tif", format = "GTiff")
+writeRaster(biomass_amazon_gCm2*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_biomass/unc_wood_biomass_gCm2.tif", format = "GTiff",overwrite=TRUE)
 
 ###
 ## Wood productivity
 ## Write back out with new name and units etc
 writeRaster(woodprod_00_09_gCm2d, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_productivity/wood_productivity_gCm2_2000_2009.tif", format = "GTiff")
 ## Write an estimate of the uncertainty back out
-writeRaster(woodprod_00_09_gCm2d*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_productivity/unc_wood_productivity_gCm2_2000_2009.tif", format = "GTiff")
+writeRaster(woodprod_00_09_gCm2d*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_productivity/unc_wood_productivity_gCm2_2000_2009.tif", format = "GTiff",overwrite=TRUE)
 
 ## Write back out with new name and units etc
 writeRaster(woodprod_10_16_gCm2d, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_productivity/wood_productivity_gCm2_2010_2016.tif", format = "GTiff")
 ## Write an estimate of the uncertainty back out
-writeRaster(woodprod_10_16_gCm2d*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_productivity/unc_wood_productivity_gCm2_2010_2016.tif", format = "GTiff")
+writeRaster(woodprod_10_16_gCm2d*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_productivity/unc_wood_productivity_gCm2_2010_2016.tif", format = "GTiff",overwrite=TRUE)
 
 ###
 ## Wood mortality
@@ -192,74 +192,109 @@ writeRaster(woodprod_10_16_gCm2d*0.25, filename = "G://cssp_rainfor_amazon_brazi
 # # Write back out with new name and units etc
 writeRaster(biommort_00_09_gCm2d, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_mortality/wood_mortality_gCm2_2000_2009.tif", format = "GTiff")
 # # Write an estimate of the uncertainty back out
-writeRaster(biommort_00_09_gCm2d*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_mortality/unc_wood_mortality_gCm2_2000_2009.tif", format = "GTiff")
+writeRaster(biommort_00_09_gCm2d*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_mortality/unc_wood_mortality_gCm2_2000_2009.tif", format = "GTiff",overwrite=TRUE)
 #
 # # Write back out with new name and units etc
 writeRaster(biommort_10_16_gCm2d, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_mortality/wood_mortality_gCm2_2010_2016.tif", format = "GTiff")
 # # Write an estimate of the uncertainty back out
-writeRaster(biommort_10_16_gCm2d*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_mortality/unc_wood_mortality_gCm2_2010_2016.tif", format = "GTiff")
+writeRaster(biommort_10_16_gCm2d*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_mortality/unc_wood_mortality_gCm2_2010_2016.tif", format = "GTiff",overwrite=TRUE)
 #
 
 #done
 #done
 #resample CARD_RAINFOR and RAINFOR data----
-res_df_merge_plot_cwood <- function (benchmark,model){
+res_df_merge_plot_cwood <- function (benchmark,model,model_type){
   model_res <- resample(model,benchmark)
   model_res_df <- as.data.frame(model_res, xy=TRUE)
   benchmark_df <- as.data.frame(benchmark, xy=TRUE)
   model_benchmark_df <- merge(benchmark_df, model_res_df, by=c("x","y"))
   names(model_benchmark_df)<-c('x','y','rainfor','cardamom')
   model_benchmark_df <- model_benchmark_df[!is.na(model_benchmark_df$rainfor)&!is.na(model_benchmark_df$cardamom),]
+  if (model_type=='rainfor') {
   plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="AGB comparison 2001-2010",
-       xlab="CARDAMOM_RAINFOR Wood biomass g.m-2 ", ylab="RAINFOR Wood biomass g.m-2", pch=19)
+       xlab="CARDAMOM_RAINFOR Wood biomass g.m-2 ", ylab="RAINFOR Wood biomass g.m-2", pch=19, xlim=c(0,25000), ylim=c(0,25000))
   abline(coef = c(0,1),col='red', lwd=3)
+  }
+  else {
+    plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="AGB comparison 2001-2010",
+         xlab="CARDAMOM_NORAINFOR Wood biomass g.m-2 ", ylab="RAINFOR Wood biomass g.m-2", pch=19, xlim=c(0,25000), ylim=c(0,25000))
+    abline(coef = c(0,1),col='red', lwd=3)
+  }
 }
 
-res_df_merge_plot_nppwood <- function (benchmark,model){
+res_df_merge_plot_nppwood <- function (benchmark,model,model_type){
   model_res <- resample(model,benchmark)
   model_res_df <- as.data.frame(model_res, xy=TRUE)
   benchmark_df <- as.data.frame(benchmark, xy=TRUE)
   model_benchmark_df <- merge(benchmark_df, model_res_df, by=c("x","y"))
   names(model_benchmark_df)<-c('x','y','rainfor','cardamom')
   model_benchmark_df <- model_benchmark_df[!is.na(model_benchmark_df$rainfor)&!is.na(model_benchmark_df$cardamom),]
-  plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody NPP comparison 2000/1-2009",
-       xlab="CARDAMOM_RAINFOR Woody NPP g.m-2.d-1 ", ylab="RAINFOR Wood productivity g.m-2.d-1", pch=19)
+  if (model_type=='rainfor') {
+    plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody NPP comparison 2000/1-2009",
+       xlab="CARDAMOM_RAINFOR Woody NPP g.m-2.d-1 ", ylab="RAINFOR Wood productivity g.m-2.d-1", pch=19, xlim=c(0,4), ylim=c(0,4))
   abline(coef = c(0,1),col='red', lwd=3)
+  }
+  else {
+    plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody NPP comparison 2000/1-2009",
+         xlab="CARDAMOM_NORAINFOR Woody NPP g.m-2.d-1 ", ylab="RAINFOR Wood productivity g.m-2.d-1", pch=19, xlim=c(0,4), ylim=c(0,4))
+    abline(coef = c(0,1),col='red', lwd=3)
+  }
 }
 
-res_df_merge_plot_nppwood_2 <- function (benchmark,model){
+res_df_merge_plot_nppwood_2 <- function (benchmark,model,model_type){
   model_res <- resample(model,benchmark)
   model_res_df <- as.data.frame(model_res, xy=TRUE)
   benchmark_df <- as.data.frame(benchmark, xy=TRUE)
   model_benchmark_df <- merge(benchmark_df, model_res_df, by=c("x","y"))
   names(model_benchmark_df)<-c('x','y','rainfor','cardamom')
   model_benchmark_df <- model_benchmark_df[!is.na(model_benchmark_df$rainfor)&!is.na(model_benchmark_df$cardamom),]
-  plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody NPP comparison 2010-2016",
-       xlab="CARDAMOM_RAINFOR Woody NPP g.m-2.d-1 ", ylab="RAINFOR Wood productivity g.m-2.d-1", pch=19)
+  if (model_type=='rainfor') {
+    plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody NPP comparison 2010-2016",
+       xlab="CARDAMOM_RAINFOR Woody NPP g.m-2.d-1 ", ylab="RAINFOR Wood productivity g.m-2.d-1", pch=19, xlim=c(0,4), ylim=c(0,4))
   abline(coef = c(0,1),col='red', lwd=3)
+  }
+  else {
+    plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody NPP comparison 2010-2016",
+         xlab="CARDAMOM_NORAINFOR Woody NPP g.m-2.d-1 ", ylab="RAINFOR Wood productivity g.m-2.d-1", pch=19, xlim=c(0,4), ylim=c(0,4))
+    abline(coef = c(0,1),col='red', lwd=3)
+  }
 }
 
-res_df_merge_plot_outputwood <- function (benchmark,model){
+res_df_merge_plot_outputwood <- function (benchmark,model,model_type){
   model_res <- resample(model,benchmark)
   model_res_df <- as.data.frame(model_res, xy=TRUE)
   benchmark_df <- as.data.frame(benchmark, xy=TRUE)
   model_benchmark_df <- merge(benchmark_df, model_res_df, by=c("x","y"))
   names(model_benchmark_df)<-c('x','y','rainfor','cardamom')
   model_benchmark_df <- model_benchmark_df[!is.na(model_benchmark_df$rainfor)&!is.na(model_benchmark_df$cardamom),]
-  plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody Carbon losses comparison 2000/1-2009",
-       xlab="CARDAMOM_RAINFOR Output Wood g.m-2.d-1 ", ylab="RAINFOR Wood mortality g.m-2.d-1", pch=19)
+  if (model_type=='rainfor') {
+    plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody Carbon losses comparison 2000/1-2009",
+       xlab="CARDAMOM_RAINFOR Output Wood g.m-2.d-1 ", ylab="RAINFOR Wood mortality g.m-2.d-1", pch=19, xlim=c(0,4), ylim=c(0,4))
   abline(coef = c(0,1),col='red', lwd=3)
+  }
+  else {
+    plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody Carbon losses comparison 2000/1-2009",
+         xlab="CARDAMOM_NORAINFOR Output Wood g.m-2.d-1 ", ylab="RAINFOR Wood mortality g.m-2.d-1", pch=19, xlim=c(0,4), ylim=c(0,4))
+    abline(coef = c(0,1),col='red', lwd=3)
+  }
 }
-res_df_merge_plot_outputwood_2 <- function (benchmark,model){
+res_df_merge_plot_outputwood_2 <- function (benchmark,model,model_type){
   model_res <- resample(model,benchmark)
   model_res_df <- as.data.frame(model_res, xy=TRUE)
   benchmark_df <- as.data.frame(benchmark, xy=TRUE)
   model_benchmark_df <- merge(benchmark_df, model_res_df, by=c("x","y"))
   names(model_benchmark_df)<-c('x','y','rainfor','cardamom')
   model_benchmark_df <- model_benchmark_df[!is.na(model_benchmark_df$rainfor)&!is.na(model_benchmark_df$cardamom),]
-  plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody Carbon losses comparison 2010-2016",
-       xlab="CARDAMOM_RAINFOR Output Wood g.m-2.d-1 ", ylab="RAINFOR Wood mortality g.m-2.d-1", pch=19)
+  if (model_type=='rainfor') {
+    plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody Carbon losses comparison 2010-2016",
+       xlab="CARDAMOM_RAINFOR Output Wood g.m-2.d-1 ", ylab="RAINFOR Wood mortality g.m-2.d-1", pch=19, xlim=c(0,4), ylim=c(0,4))
   abline(coef = c(0,1),col='red', lwd=3)
+  }
+  else {
+    plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="Woody Carbon losses comparison 2010-2016",
+         xlab="CARDAMOM_NORAINFOR Output Wood g.m-2.d-1 ", ylab="RAINFOR Wood mortality g.m-2.d-1", pch=19, xlim=c(0,4), ylim=c(0,4))
+    abline(coef = c(0,1),col='red', lwd=3)
+  }
 }
 # plot(model_benchmark_df$cardamom, model_benchmark_df$rainfor, main="AGB comparison 2001-2010",
 #      xlab="CARDAMOM_RAINFOR Wood biomass g.m-2 ", ylab="RAINFOR Wood biomass g.m-2", pch=19)
@@ -342,11 +377,6 @@ plot(rainfor_cardamom_agb_01$cardamom_rainfor_cw_0119, rainfor_cardamom_agb_01$r
 abline(coef = c(0,1),col='red', lwd=3)
 
 #done
-#save relevant data----
-save(cardamom_cwood_0110_mean,cardamom_nppwood_0109_mean,cardamom_nppwood_1016_mean,cardamom_outputwood_0109_mean,
-     cardamom_outputwood_1016_mean,cardamom_updated_rainfor_cwood_0110_mean,cardamom_updated_rainfor_nppwood_0110_mean,
-     cardamom_updated_rainfor_nppwood_1016_mean,cardamom_updated_rainfor_outputwood_0110_mean,
-     cardamom_updated_rainfor_outputwood_1016_mean,file='./data/extracted_card.RData')
 
 ###################################################
 ###############Compare Specific pixels#############
@@ -373,14 +403,27 @@ cardamom_outputwood_0109_mean_subset<-cardamom_outputwood_extract_subset[[1]]
 cardamom_outputwood_1016_mean_subset<-cardamom_outputwood_extract_subset[[2]]
 
 par(mfrow = c(1, 2))
-res_df_merge_plot_cwood(biomass_amazon_gCm2_pixels,cardamom_cwood_0110_mean_subset)
-res_df_merge_plot_nppwood(woodprod_00_09_gCm2d_pixels,cardamom_nppwood_0109_mean_subset)
-res_df_merge_plot_nppwood_2(woodprod_10_16_gCm2d_pixels,cardamom_nppwood_1016_mean_subset)
-res_df_merge_plot_outputwood(biommort_00_09_gCm2d_pixels,cardamom_outputwood_0109_mean_subset)
-res_df_merge_plot_outputwood_2(biommort_10_16_gCm2d_pixels,cardamom_outputwood_1016_mean_subset)
+res_df_merge_plot_cwood(biomass_amazon_gCm2_pixels,cardamom_norainfor_cwood_0110_mean_subset,'norainfor')
+res_df_merge_plot_cwood(biomass_amazon_gCm2_pixels,cardamom_cwood_0110_mean_subset,'rainfor')
 
-res_df_merge_plot_cwood(biomass_amazon_gCm2_pixels,cardamom_norainfor_cwood_0110_mean_subset)
-res_df_merge_plot_nppwood(woodprod_00_09_gCm2d_pixels,cardamom_norainfor_nppwood_0109_mean_subset)
-res_df_merge_plot_nppwood_2(woodprod_10_16_gCm2d_pixels,cardamom_norainfor_nppwood_1016_mean_subset)
-res_df_merge_plot_outputwood(biommort_00_09_gCm2d_pixels,cardamom_norainfor_outputwood_0109_mean_subset)
-res_df_merge_plot_outputwood_2(biommort_10_16_gCm2d_pixels,cardamom_norainfor_outputwood_1016_mean_subset)
+res_df_merge_plot_nppwood(woodprod_00_09_gCm2d_pixels,cardamom_norainfor_nppwood_0109_mean_subset,'norainfor')
+res_df_merge_plot_nppwood(woodprod_00_09_gCm2d_pixels,cardamom_nppwood_0109_mean_subset,'rainfor')
+
+res_df_merge_plot_nppwood_2(woodprod_10_16_gCm2d_pixels,cardamom_norainfor_nppwood_1016_mean_subset,'norainfor')
+res_df_merge_plot_nppwood_2(woodprod_10_16_gCm2d_pixels,cardamom_nppwood_1016_mean_subset,'rainfor')
+
+res_df_merge_plot_outputwood(biommort_00_09_gCm2d_pixels,cardamom_norainfor_outputwood_0109_mean_subset,'norainfor')
+res_df_merge_plot_outputwood(biommort_00_09_gCm2d_pixels,cardamom_outputwood_0109_mean_subset,'rainfor')
+
+res_df_merge_plot_outputwood_2(biommort_10_16_gCm2d_pixels,cardamom_norainfor_outputwood_1016_mean_subset,'norainfor')
+res_df_merge_plot_outputwood_2(biommort_10_16_gCm2d_pixels,cardamom_outputwood_1016_mean_subset,'rainfor')
+
+#save relevant data----
+save(cardamom_cwood_0110_mean,cardamom_nppwood_0109_mean,cardamom_nppwood_1016_mean,cardamom_outputwood_0109_mean,
+     cardamom_outputwood_1016_mean,cardamom_updated_rainfor_cwood_0110_mean,cardamom_updated_rainfor_nppwood_0110_mean,
+     cardamom_updated_rainfor_nppwood_1016_mean,cardamom_updated_rainfor_outputwood_0110_mean,
+     cardamom_updated_rainfor_outputwood_1016_mean,cardamom_norainfor_cwood_0110_mean_subset,cardamom_norainfor_nppwood_0109_mean_subset,
+     cardamom_norainfor_nppwood_1016_mean_subset,cardamom_norainfor_outputwood_0109_mean_subset,cardamom_norainfor_outputwood_1016_mean_subset,
+     cardamom_cwood_0110_mean_subset,cardamom_nppwood_0109_mean_subset,cardamom_nppwood_1016_mean_subset,cardamom_outputwood_0109_mean_subset,
+     cardamom_outputwood_1016_mean_subset,biomass_amazon_gCm2_pixels,woodprod_00_09_gCm2d_pixels,woodprod_10_16_gCm2d_pixels,
+     biommort_00_09_gCm2d_pixels,biommort_10_16_gCm2d_pixels,file='./data/extracted_card.RData')

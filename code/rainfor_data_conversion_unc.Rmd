@@ -129,7 +129,7 @@ upper_biommort_10_16_gCm2d <- biommort_10_16_gCm2d+biommort_10_16_gCm2d_unc
 
 Compare CARDAMOM data with RAINFOR 
 ```{r echo = FALSE, message=FALSE, fig.asp = 0.9, fig.width = 10}
-load("C:/Users/cnwobi/Documents/cssp_brazil/cssp_brazil_R/data/extracted_card.RData")
+load("R:/cssp_brazil/cssp_brazil_R/data/extracted_card.RData")
 
 woody_var<-c('Biomass','Woody NPP 2000/1-2009','Woody NPP 2010-2016','Woody Mortality 2000/1-2009','Woody Mortality 2010-2016')
 
@@ -170,5 +170,28 @@ rainfor_dat_max <- c(formatC(cellStats(upper_biomass_amazon_gCm2,'mean'), format
 
 compare_rainfor_card_mean <- data.frame(woody_var,rainfor_dat,rainfor_dat_min,card_norainfor, card_rainfor,rainfor_dat_max)
 compare_rainfor_card_mean
+```
+
+Pixel based analysis of assimilted Rainfor data into CARDAMOM DALEC
+```{r echo = FALSE, message=FALSE, fig.asp = 0.9, fig.width = 10}
+#load("R:/cssp_brazil/cssp_brazil_R/data/extracted_card.RData")
+source('R:/cssp_brazil/cssp_brazil_R/code/extract_resample_plot.R') #imports plotting codes
+
+par(mfrow = c(1, 2))
+res_df_merge_plot_cwood(biomass_amazon_gCm2_pixels,cardamom_norainfor_cwood_0110_mean_subset,'norainfor')
+res_df_merge_plot_cwood(biomass_amazon_gCm2_pixels,cardamom_cwood_0110_mean_subset,'rainfor')
+
+res_df_merge_plot_nppwood(woodprod_00_09_gCm2d_pixels,cardamom_norainfor_nppwood_0109_mean_subset,'norainfor')
+res_df_merge_plot_nppwood(woodprod_00_09_gCm2d_pixels,cardamom_nppwood_0109_mean_subset,'rainfor')
+
+res_df_merge_plot_nppwood_2(woodprod_10_16_gCm2d_pixels,cardamom_norainfor_nppwood_1016_mean_subset,'norainfor')
+res_df_merge_plot_nppwood_2(woodprod_10_16_gCm2d_pixels,cardamom_nppwood_1016_mean_subset,'rainfor')
+
+res_df_merge_plot_outputwood(biommort_00_09_gCm2d_pixels,cardamom_norainfor_outputwood_0109_mean_subset,'norainfor')
+res_df_merge_plot_outputwood(biommort_00_09_gCm2d_pixels,cardamom_outputwood_0109_mean_subset,'rainfor')
+
+res_df_merge_plot_outputwood_2(biommort_10_16_gCm2d_pixels,cardamom_norainfor_outputwood_1016_mean_subset,'norainfor')
+res_df_merge_plot_outputwood_2(biommort_10_16_gCm2d_pixels,cardamom_outputwood_1016_mean_subset,'rainfor')
+
 ```
 
