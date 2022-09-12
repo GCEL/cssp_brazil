@@ -134,6 +134,32 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
              abline(coef = c(0,1),col='red', lwd=3)+
                text(20000, 2000, paste('RMSE = ',model_rmse, sep='')))
     }
+    else if (i=='biomass_mortality') {
+      model <- collate_all_models_cwood(region,cardamom_var,i,reference)
+      model_res <- resample(model,benchmark)
+      model_res_df <- as.data.frame(model_res, xy=TRUE)
+      model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+      names(model_benchmark_df)<-c('x','y','benchmark',i)
+      model_benchmark_df<-na.omit(model_benchmark_df)
+      model_rmse<- rmse(model_benchmark_df[,3],model_benchmark_df[,4])
+      assign(paste("plot", i, sep = "_"),
+             plot(model_benchmark_df$productivity, model_benchmark_df$benchmark, main="",xlab="Biomass and Mortality only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000))+
+               abline(coef = c(0,1),col='red', lwd=3)+
+               text(20000, 2000, paste('RMSE = ',model_rmse, sep='')))
+    }
+    else if (i=='biomass_productivity') {
+      model <- collate_all_models_cwood(region,cardamom_var,i,reference)
+      model_res <- resample(model,benchmark)
+      model_res_df <- as.data.frame(model_res, xy=TRUE)
+      model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+      names(model_benchmark_df)<-c('x','y','benchmark',i)
+      model_benchmark_df<-na.omit(model_benchmark_df)
+      model_rmse<- rmse(model_benchmark_df[,3],model_benchmark_df[,4])
+      assign(paste("plot", i, sep = "_"),
+             plot(model_benchmark_df$productivity, model_benchmark_df$benchmark, main="",xlab="Biomass and Productivity only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000))+
+               abline(coef = c(0,1),col='red', lwd=3)+
+               text(20000, 2000, paste('RMSE = ',model_rmse, sep='')))
+    }
     else if (i=='productivity_mortality') {
       model <- collate_all_models_cwood(region,cardamom_var,i,reference)
       model_res <- resample(model,benchmark)
@@ -166,6 +192,8 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
   plot_biomass
   plot_productivity
   plot_mortality
+  plot_biomass_mortality
+  plot_biomass_productivity
   plot_productivity_mortality
   plot_biomass_productivity_mortality
   mtext("Aboveground Biomass 2010", line=-2, side=3, outer=TRUE, cex=1.5)
@@ -296,6 +324,32 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(1, 3.5, paste('RMSE = ',model_rmse, sep='')))
         }
+        else if (i=='biomass_mortality') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- rmse(model_benchmark_df[,3],model_benchmark_df[,4])
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$productivity, model_benchmark_df$benchmark, main="",xlab="Biomass and Mortality only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4))+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(1, 3.5, paste('RMSE = ',model_rmse, sep='')))
+        }
+        else if (i=='biomass_productivity') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- rmse(model_benchmark_df[,3],model_benchmark_df[,4])
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$productivity, model_benchmark_df$benchmark, main="",xlab="Biomass and Productivity only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4))+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(1, 3.5, paste('RMSE = ',model_rmse, sep='')))
+        }
         else if (i=='productivity_mortality') {
           model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
@@ -328,6 +382,8 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
       plot_biomass
       plot_productivity
       plot_mortality
+      plot_biomass_mortality
+      plot_biomass_productivity
       plot_productivity_mortality
       plot_biomass_productivity_mortality
       mtext(paste(cardamom_var, j, sep = "_"), line=-2, side=3, outer=TRUE, cex=1.5)
@@ -388,6 +444,32 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(1, 3.5, paste('RMSE = ',model_rmse, sep='')))
         }
+        else if (i=='biomass_mortality') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- rmse(model_benchmark_df[,3],model_benchmark_df[,4])
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$productivity, model_benchmark_df$benchmark, main="",xlab="Biomass and Mortality only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4))+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(1, 3.5, paste('RMSE = ',model_rmse, sep='')))
+        }
+        else if (i=='biomass_productivity') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- rmse(model_benchmark_df[,3],model_benchmark_df[,4])
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$productivity, model_benchmark_df$benchmark, main="",xlab="Biomass and Productivity only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4))+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(1, 3.5, paste('RMSE = ',model_rmse, sep='')))
+        }
         else if (i=='productivity_mortality') {
           model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
@@ -420,6 +502,8 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
       plot_biomass
       plot_productivity
       plot_mortality
+      plot_biomass_mortality
+      plot_biomass_productivity
       plot_productivity_mortality
       plot_biomass_productivity_mortality
       mtext(paste(cardamom_var, j, sep = "_"), line=-2, side=3, outer=TRUE, cex=1.5)
@@ -456,7 +540,7 @@ one_function_to_plot_them_all <- function(region,cardamom_var,model_variant,refe
     }
   }
 }
-par(mfrow = c(2,3))
+par(mfrow = c(2,4))
 one_function_to_plot_them_all(amazonia_subset,compare_var_names[1],mod_var,reference_data,time_period)
 one_function_to_plot_them_all(amazonia_subset,compare_var_names[2],mod_var,reference_data,time_period[1])
 one_function_to_plot_them_all(amazonia_subset,compare_var_names[2],mod_var,reference_data,time_period[2])
