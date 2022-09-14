@@ -12,7 +12,7 @@ extractfun <- function(m) {
 amazon_nw_poly <- shapefile("./data/amazon_nw.shp");amazon_sw_poly <- shapefile("./data/amazon_sw.shp");amazon_ec_poly <- shapefile("./data/amazon_ec.shp");amazon_bs_poly <- shapefile("./data/amazon_bs.shp");amazon_gs_poly <- shapefile("./data/amazon_gs.shp")
 ####extract data from raster into dataframe
 amazonia_regres_data <- reg_card_var_regression(reg_data[[6]],reg_names[6],var_names)
-summary(amazonia_regres_data)
+# summary(amazonia_regres_data)
 # all_amazonia_region_regres_data <- na.omit(all_reg_var_regres_run(reg_data,reg_names,var_names))
 # summary(all_amazonia_region_regres_data)
 # rownames(amazonia_regres_data)<-1:nrow(amazonia_regres_data)
