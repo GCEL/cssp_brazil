@@ -5,7 +5,7 @@ library(ncdf4); library(raster); library(dplyr); library(ggplot2);library(ggpubr
 
 #done
 #data prep pre-cursors----
-compare_var_names <- c('WOOD','NPP_wood_flx','OUTPUT_wood_flx')
+compare_var_names <- c('WOOD','NPP_wood_flx','OUTPUT_wood_flx','MTT_wood')
 amazonia_subset <- shapefile("R:/cssp_brazil/cssp_brazil_R/data/amazonia_subset.shp")
 mod_var <- c('norainfor','biomass','biomass_initial','biomass_annual','productivity','mortality',
              'biomass_productivity','biomass_mortality','productivity_mortality',
