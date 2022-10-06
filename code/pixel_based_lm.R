@@ -218,5 +218,5 @@ crs(pixels_gpp_lai_lm_rsq_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
 crs(pixels_gpp_lai_lm_rse_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
 
 par(mfrow = c(1,2))
-
-plot(pixels_gpp_lai_lm_rsq_raster);plot(pixels_gpp_lai_lm_rse_raster)
+plot(pixels_gpp_lai_lm_rsq_raster,main=expression("R"^2));plot(pixels_gpp_lai_lm_rse_raster,main=expression('Residual SE'))
+mtext(expression("GPP~LAI Relationship"), line=-2, side=3, outer=TRUE, cex=1.5)

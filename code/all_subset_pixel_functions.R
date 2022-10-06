@@ -1,38 +1,3 @@
-#All codes being Used
-#import libraries
-#install packages----
-library(ncdf4); library(raster); library(dplyr); library(ggplot2);library(ggpubr);library(quantreg);library(ggpp);library(rgeos);library(ggpmisc);library(rgdal);library(Metrics)
-
-#done
-#data prep pre-cursors----
-# amazonia_subset <- shapefile("R:/cssp_brazil/cssp_brazil_R/data/amazonia_subset.shp")
-# compare_var_names <- c('WOOD','NPP_wood_flx','OUTPUT_wood_flx','MTT_wood')
-# mod_var <- c('norainfor','biomass','biomass_initial','biomass_annual','productivity','mortality',
-#              'biomass_productivity','biomass_mortality','productivity_mortality',
-#              'biomass_initial_productivity','biomass_initial_mortality',
-#              'biomass_annual_productivity','biomass_annual_mortality',
-#              'biomass_initial_productivity_mortality','biomass_annual_productivity_mortality','biomass_productivity_mortality')
-# time_period <- c('01/09','10/16')
-# prefix <- 'R://ILAMB_beta_devel/RAINFOR_leeds_run/cssp_brazil_amazon_run/DATA/benchmark/Amazon_subset_'
-# suffix <- '_1deg_monthly_2001_updated_2019.nc'
-
-# rt_amazon_00_09_day<-biomass_amazon_gCm2/biommort_00_09_gCm2d
-# rt_amazon_00_09_year<-rt_amazon_00_09_day/365.25
-# rt_amazon_10_16_day<-biomass_amazon_gCm2/biommort_10_16_gCm2d
-# rt_amazon_10_16_year<-rt_amazon_10_16_day/365.25
-
-# plot(biomass_amazon_gCm2,main='Woody Biomass t/ha');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T);plot(amazonia_subset,add=T)
-# 
-# plot(woodprod_00_09_gCm2d,main='Woody Productivity 2000-2009 t/ha/year');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T);plot(amazonia_subset,add=T)
-# plot(woodprod_10_16_gCm2d,main='Woody Productivity 2010-2016 t/ha/year');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T);plot(amazonia_subset,add=T)
-# plot(biommort_00_09_gCm2d,main='Woody Mortality 2000-2009 t/ha/year');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T);plot(amazonia_subset,add=T)
-# plot(biommort_10_16_gCm2d,main='Woody Mortality 2010-2016 t/ha/year');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T);plot(amazonia_subset,add=T)
-# plot(rt_amazon_00_09_year,main='Woody Residence Time 2000-2009 years');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T);plot(amazonia_subset,add=T)
-# plot(rt_amazon_10_16_year,main='Woody Residence Time 2010-2016 years');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T);plot(amazonia_subset,add=T)
-
-
-# reference_data<- c(biomass_amazon_gCm2,woodprod_00_09_gCm2d,woodprod_10_16_gCm2d,biommort_00_09_gCm2d,biommort_10_16_gCm2d,rt_amazon_00_09_year,rt_amazon_10_16_year)
-
 ########################################################################
 ####new code to include variable, model and region######################
 ########################################################################
@@ -576,9 +541,6 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
     }
   }
 }
-# extract_biomass_subset_all_models(amazonia_subset,compare_var_names[1],mod_var[1],biomass_amazon_gCm2)
-# collate_all_models_cwood(amazonia_subset,compare_var_names[1],mod_var[1],biomass_amazon_gCm2)
-# par(mfrow = c(2,4));res_df_merge_plot_cwood(amazonia_subset,compare_var_names[1],mod_var,biomass_amazon_gCm2)
 
 #done
 #######################################################
@@ -1114,12 +1076,7 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
   }
 }
 
-# extract_npp_mort_subset_models(amazonia_subset,compare_var_names[2],mod_var[1],woodprod_00_09_gCm2d,time_period)
-# collate_all_models_npp_mort(amazonia_subset,compare_var_names[2],mod_var[1],reference_data[[3]],time_period[1])
-# res_df_merge_plot_npp_mort(amazonia_subset,compare_var_names[3],mod_var,reference_data[[3]],time_period[2])
-# res_df_merge_plot_npp_mort(amazonia_subset,compare_var_names[4],mod_var,reference_data[[6]],time_period[1])
-
-#done
+# done
 ####################################################
 ################Residence Time######################
 ####################################################
@@ -1622,7 +1579,6 @@ res_df_merge_plot_rt <- function (region,cardamom_var,model_variant,reference,tp
     }
   }
 }
-# res_df_merge_plot_rt(amazonia_subset,compare_var_names[4],mod_var,reference_data[[6]],time_period[2])
 
 #done
 #######################################################
@@ -1645,7 +1601,7 @@ one_function_to_plot_them_all <- function(region,cardamom_var,model_variant,refe
         else if (tp =='10/16'){res_df_merge_plot_npp_mort(region,i,model_variant,reference[[3]],j)
         }
       }
-      }
+    }
     else if (cardamom_var=='OUTPUT_wood_flx') {
       for (j in tp) {
         if (tp =='01/09'){res_df_merge_plot_npp_mort(region,i,model_variant,reference[[4]],j)
@@ -1665,12 +1621,4 @@ one_function_to_plot_them_all <- function(region,cardamom_var,model_variant,refe
   }
 }
 
-# par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[1],mod_var,reference_data,time_period[1])
-# par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[1],mod_var,reference_data,time_period[2])
-# par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[2],mod_var,reference_data,time_period[1])
-# par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[2],mod_var,reference_data,time_period[2])
-# par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[3],mod_var,reference_data,time_period[1])
-# par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[3],mod_var,reference_data,time_period[2])
-# par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[4],mod_var,reference_data,time_period[1])
-# par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[4],mod_var,reference_data,time_period[2])
 #done
