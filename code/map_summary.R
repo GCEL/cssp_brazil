@@ -27,10 +27,10 @@ thayr_to_gm2day_fun <- function(x) { x * (100/365.25) }
 thayr_to_gCm2day_fun <- function(x) { (x/2) * (100/365.25) }
 tha_to_gCm2_fun <- function(x) { (x/2) * 100 }
 
-woodprod_00_09_gm2d <- calc(woodprod_00_09, thayr_to_gm2day_fun)
-woodprod_10_16_gm2d <- calc(woodprod_10_16, thayr_to_gm2day_fun)
-biommort_00_09_gm2d <- calc(biommort_00_09, thayr_to_gm2day_fun)
-biommort_10_16_gm2d <- calc(biommort_10_16, thayr_to_gm2day_fun)
+woodprod_00_09_gm2d <- calc(woodprod_00_09, thayr_to_gCm2day_fun)
+woodprod_10_16_gm2d <- calc(woodprod_10_16, thayr_to_gCm2day_fun)
+biommort_00_09_gm2d <- calc(biommort_00_09, thayr_to_gCm2day_fun)
+biommort_10_16_gm2d <- calc(biommort_10_16, thayr_to_gCm2day_fun)
 
 biomass_amazon_gCm2 <- calc(biomass_amazon, tha_to_gCm2_fun)
 biomass_amazon_gCm2_card <- brick('G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg/wood_biomass/wood_biomass_gCm2.tif')

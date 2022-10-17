@@ -121,34 +121,34 @@ amazon_woodprod_gCm2d_01_16_monthly <- setZ(amazon_woodprod_gCm2d_01_16_monthly,
 amazon_biommort_gCm2d_01_16_monthly <- setZ(amazon_biommort_gCm2d_01_16_monthly,layer_date_format,"Date")
 amazon_biomass_gCm2_01_16_monthly <- setZ(amazon_biomass_gCm2_01_16_monthly,layer_date_format,"Date")
 
-# writeRaster(amazon_woodprod_01_10_gm2d, "rainfor_nppwood_01_10.nc", overwrite=TRUE, 
+# writeRaster(amazon_woodprod_01_10_gm2d, "rainfor_nppwood_01_10.nc", overwrite=TRUE,
 #             format="CDF",     varname="nppwood", varunit="g.m-2.d-1",force_v4=TRUE,
 #             longname="NPP for wood", xname="lon",   yname="lat", zname='time', zunit='years since 2000-01-01')
-# writeRaster(amazon_biommort_01_10_gm2d, "rainfor_outputwood_01_10.nc", overwrite=TRUE, 
+# writeRaster(amazon_biommort_01_10_gm2d, "rainfor_outputwood_01_10.nc", overwrite=TRUE,
 #             format="CDF",     varname="outputwood", varunit="g.m-2.d-1",force_v4=TRUE,
 #             longname="Wood Mortality", xname="lon",   yname="lat", zname='time', zunit='years since 2000-01-01')
 
-# writeRaster(amazon_woodprod_01_16_gm2d, "rainfor_nppwood_01_16.nc", overwrite=TRUE, 
+# writeRaster(amazon_woodprod_01_16_gm2d, "rainfor_nppwood_01_16.nc", overwrite=TRUE,
 #             format="CDF",     varname="nppwood", varunit="g.m-2.d-1",force_v4=TRUE,
 #             longname="NPP for wood", xname="lon",   yname="lat", zname='time', zunit='years since 2000-01-01')
-# writeRaster(amazon_biommort_01_16_gm2d, "rainfor_outputwood_01_16.nc", overwrite=TRUE, 
+# writeRaster(amazon_biommort_01_16_gm2d, "rainfor_outputwood_01_16.nc", overwrite=TRUE,
 #             format="CDF",     varname="outputwood", varunit="g.m-2.d-1",force_v4=TRUE,
 #             longname="Wood Mortality", xname="lon",   yname="lat", zname='time', zunit='years since 2000-01-01')
 
-# writeRaster(amazon_woodprod_01_16_monthly, "rainfor_nppwood_01_16_monthly.nc", overwrite=TRUE, 
+# writeRaster(amazon_woodprod_01_16_monthly, "rainfor_nppwood_01_16_monthly.nc", overwrite=TRUE,
 #             format="CDF",     varname="nppwood", varunit="g.m-2.d-1",force_v4=TRUE,
 #             longname="NPP for wood", xname="lon",   yname="lat", zname='time', zunit='days since 2001-1-15 00:00:00')
-# writeRaster(amazon_biommort_01_16_monthly, "rainfor_outputwood_01_16_monthly.nc", overwrite=TRUE, 
+# writeRaster(amazon_biommort_01_16_monthly, "rainfor_outputwood_01_16_monthly.nc", overwrite=TRUE,
 #             format="CDF",     varname="outputwood", varunit="g.m-2.d-1",force_v4=TRUE,
 #             longname="Wood Mortality", xname="lon",   yname="lat", zname='time', zunit='days since 2001-1-15 00:00:00')
-# writeRaster(amazon_biomass_01_16_monthly, "rainfor_biomasswood_01_16_monthly.nc", overwrite=TRUE, 
+# writeRaster(amazon_biomass_01_16_monthly, "rainfor_biomasswood_01_16_monthly.nc", overwrite=TRUE,
 #             format="CDF",     varname="WOOD", varunit="g.m-2",force_v4=TRUE,
 #             longname="Wood Biomass", xname="lon",   yname="lat", zname='time', zunit='days since 2001-1-15 00:00:00')
 
-# writeRaster(amazon_woodprod_01_10_monthly, "rainfor_nppwood_01_10_monthly.nc", overwrite=TRUE, 
+# writeRaster(amazon_woodprod_01_10_monthly, "rainfor_nppwood_01_10_monthly.nc", overwrite=TRUE,
 #             format="CDF",     varname="NPP_wood_flx", varunit="g.m-2.d-1",force_v4=TRUE,
 #             longname="NPP for wood", xname="lon",   yname="lat", zname='time', zunit='days since 2001-1-15 00:00:00')
-# writeRaster(amazon_biommort_01_10_monthly, "rainfor_outputwood_01_10_monthly.nc", overwrite=TRUE, 
+# writeRaster(amazon_biommort_01_10_monthly, "rainfor_outputwood_01_10_monthly.nc", overwrite=TRUE,
 #             format="CDF",     varname="outputwood", varunit="g.m-2.d-1",force_v4=TRUE,
 #             longname="Wood Mortality", xname="lon",   yname="lat", zname='time', zunit='days since 2001-1-15 00:00:00')
 
