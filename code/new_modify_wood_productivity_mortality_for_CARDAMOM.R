@@ -32,11 +32,26 @@ biommort_10_16_gCm2d <- calc(biommort_10_16, thayr_to_gCm2day_fun)
 ###
 ## Wood biomass
 # Write back out with new name and units etc
-writeRaster(biomass_amazon_gCm2, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_biomass/wood_biomass_gCm2_2000_2016.tif", format = "GTiff")
+writeRaster(biomass_amazon_gCm2, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_biomass/wood_biomass_gCm2.tif", format = "GTiff",overwrite=TRUE)
 # Write an estimate of the uncertainty back out
-writeRaster(biomass_amazon_gCm2*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_biomass/unc_wood_biomass_gCm2_2000_2016.tif", format = "GTiff",overwrite=TRUE)
-writeRaster(biomass_amazon_gCm2*0.05, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_biomass/unc5_wood_biomass_gCm2_2000_2016.tif", format = "GTiff",overwrite=TRUE)
+writeRaster(biomass_amazon_gCm2*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_biomass/unc_wood_biomass_gCm2.tif", format = "GTiff",overwrite=TRUE)
+writeRaster(biomass_amazon_gCm2*0.05, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_biomass/unc5_wood_biomass_gCm2.tif", format = "GTiff",overwrite=TRUE)
 
+no_of_years <- as.numeric(c(2000:2016))
+no_of_years_obj <- c(2001:2016)
+
+output_location_a <- "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_biomass/wood_biomass_gCm2_"
+output_location_b <- "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_biomass/unc_wood_biomass_gCm2_"
+
+save_annually <- function (a,year_no) {
+  for (t in year_no) {
+    # Write back out with new name and units etc
+    writeRaster(a, filename = paste(output_location_a,t, ".tif",sep=""), format = "GTiff",overwrite=TRUE)
+    # Write an estimate of the uncertainty back out
+    writeRaster(a*0.25, filename = paste(output_location_b,t, ".tif",sep=""), format = "GTiff",overwrite=TRUE)
+  }
+}
+save_annually(biomass_amazon_gCm2,no_of_years)
 ###
 ## Wood productivity
 ## Write back out with new name and units etc
@@ -66,5 +81,19 @@ writeRaster(biommort_10_16_gCm2d, filename = "G://cssp_rainfor_amazon_brazil/rai
 writeRaster(biommort_10_16_gCm2d*0.25, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_mortality/unc_wood_mortality_gCm2_2010_2016.tif", format = "GTiff",overwrite=TRUE)
 writeRaster(biommort_10_16_gCm2d*0.05, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/1deg_converted/wood_mortality/unc5_wood_mortality_gCm2_2010_2016.tif", format = "GTiff",overwrite=TRUE)
 #
+####subset######
+amazonia_subset <- shapefile("./data/amazonia_subset.shp")
+
+extract_subset <- function (region,reference){
+  masked1 <- mask(reference, region)
+  masked2 <- masked1 > -Inf
+  poly <- rasterToPolygons(masked2, dissolve=TRUE)
+  data_region <- mask(reference,poly)
+  return(data_region)
+}
+
+#amazonia_subset_raster<-extract_subset(amazonia_subset,biomass_amazon_gCm2)
+#plot(amazonia_subset_raster)
+#writeRaster(amazonia_subset_raster, filename = "G://cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazonia_subset.tif", format = "GTiff")
 
 #done
