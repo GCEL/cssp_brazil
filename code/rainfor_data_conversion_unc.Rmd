@@ -186,53 +186,82 @@ compare_rainfor_card_mean <- data.frame(woody_var,rainfor_dat,rainfor_dat_min,ca
 compare_rainfor_card_mean
 ```
 
-Pixel based analysis of assimilted Rainfor data into CARDAMOM DALEC
-```{r echo = FALSE, message=FALSE, fig.asp = 0.9, fig.width = 10}
-#load("R:/cssp_brazil/cssp_brazil_R/data/extracted_card.RData")
-source('R:/cssp_brazil/cssp_brazil_R/code/extract_resample_plot.R') #imports plotting codes
-
-par(mfrow = c(1, 2))
-res_df_merge_plot_cwood(biomass_amazon_gCm2_pixels,cardamom_norainfor_cwood_0110_mean_subset,'norainfor')
-res_df_merge_plot_cwood(biomass_amazon_gCm2_pixels,cardamom_cwood_0110_mean_subset,'rainfor')
-
-res_df_merge_plot_nppwood(woodprod_00_09_gCm2d_pixels,cardamom_norainfor_nppwood_0109_mean_subset,'norainfor')
-res_df_merge_plot_nppwood(woodprod_00_09_gCm2d_pixels,cardamom_nppwood_0109_mean_subset,'rainfor')
-
-res_df_merge_plot_nppwood_2(woodprod_10_16_gCm2d_pixels,cardamom_norainfor_nppwood_1016_mean_subset,'norainfor')
-res_df_merge_plot_nppwood_2(woodprod_10_16_gCm2d_pixels,cardamom_nppwood_1016_mean_subset,'rainfor')
-
-res_df_merge_plot_outputwood(biommort_00_09_gCm2d_pixels,cardamom_norainfor_outputwood_0109_mean_subset,'norainfor')
-res_df_merge_plot_outputwood(biommort_00_09_gCm2d_pixels,cardamom_outputwood_0109_mean_subset,'rainfor')
-
-res_df_merge_plot_outputwood_2(biommort_10_16_gCm2d_pixels,cardamom_norainfor_outputwood_1016_mean_subset,'norainfor')
-res_df_merge_plot_outputwood_2(biommort_10_16_gCm2d_pixels,cardamom_outputwood_1016_mean_subset,'rainfor')
-
-```
-
 Pixel-subset based analysis of assimilted Rainfor data into CARDAMOM DALEC
 ```{r echo = FALSE, message=FALSE, fig.asp = 0.9, fig.width = 15}
 #load("R:/cssp_brazil/cssp_brazil_R/data/extracted_card.RData")
-source('R:/cssp_brazil/cssp_brazil_R/code/all_subset_pixel_functions.R') #imports plotting codes
+source('R:/cssp_brazil/cssp_brazil_R/code/subset_pixel_functions.R') #imports plotting codes
 
+amazonia_subset <- shapefile("R:/cssp_brazil/cssp_brazil_R/data/amazonia_subset.shp")
 compare_var_names <- c('WOOD','NPP_wood_flx','OUTPUT_wood_flx','MTT_wood')
-mod_var <- c('norainfor','biomass','biomass_initial','biomass_annual','productivity','mortality',
-             'biomass_productivity','biomass_mortality','productivity_mortality',
-             'biomass_initial_productivity','biomass_initial_mortality',
-             'biomass_annual_productivity','biomass_annual_mortality',
-             'biomass_initial_productivity_mortality','biomass_annual_productivity_mortality','biomass_productivity_mortality')
-time_period <- c('01/09','10/16')
+mod_var <- c('no_woody_data','esa_cci_biomass_only',
+             'biomass_2010','biomass_initial','biomass_annual',
+             'mortality_only','productivity_only',
+             'biomass_2010_productivity','biomass_2010_mortality',
+             'biomass_initial_productivity','biomass_annual_productivity',
+             'biomass_initial_mortality','biomass_annual_mortality',
+             'productivity_mortality_only',
+             'biomass_2010_productivity_mortality','biomass_initial_productivity_mortality','biomass_annual_productivity_mortality'
+             )
+time_period <- c('2000-2009','2010-2016')
 prefix <- 'R://ILAMB_beta_devel/RAINFOR_leeds_run/cssp_brazil_amazon_run/DATA/benchmark/Amazon_subset_'
-suffix <- '_1deg_monthly_2001_updated_2019.nc'
+suffix <- '_2000_updated_2019.nc'
 reference_data<- c(biomass_amazon_gCm2,woodprod_00_09_gCm2d,woodprod_10_16_gCm2d,biommort_00_09_gCm2d,biommort_10_16_gCm2d,rt_amazon_00_09_year,rt_amazon_10_16_year)
 
-par(mfrow = c(4,4))
-par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[1],mod_var,reference_data,time_period[1])
-par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[1],mod_var,reference_data,time_period[2])
-par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[2],mod_var,reference_data,time_period[1])
-par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[2],mod_var,reference_data,time_period[2])
-par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[3],mod_var,reference_data,time_period[1])
-par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[3],mod_var,reference_data,time_period[2])
-par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[4],mod_var,reference_data,time_period[1])
-par(mfrow = c(4,4));one_function_to_plot_them_all(amazonia_subset,compare_var_names[4],mod_var,reference_data,time_period[2])
+par(mfrow = c(3,6))
+par(mfrow = c(3,6));one_function_to_plot_them_all(amazonia_subset,compare_var_names[1],mod_var,reference_data,time_period[1])
+par(mfrow = c(3,6));one_function_to_plot_them_all(amazonia_subset,compare_var_names[1],mod_var,reference_data,time_period[2])
+par(mfrow = c(3,6));one_function_to_plot_them_all(amazonia_subset,compare_var_names[2],mod_var,reference_data,time_period[1])
+par(mfrow = c(3,6));one_function_to_plot_them_all(amazonia_subset,compare_var_names[2],mod_var,reference_data,time_period[2])
+par(mfrow = c(3,6));one_function_to_plot_them_all(amazonia_subset,compare_var_names[3],mod_var,reference_data,time_period[1])
+par(mfrow = c(3,6));one_function_to_plot_them_all(amazonia_subset,compare_var_names[3],mod_var,reference_data,time_period[2])
+par(mfrow = c(3,6));one_function_to_plot_them_all(amazonia_subset,compare_var_names[4],mod_var,reference_data,time_period[1])
+par(mfrow = c(3,6));one_function_to_plot_them_all(amazonia_subset,compare_var_names[4],mod_var,reference_data,time_period[2])
+
+```
+
+Pixel based analysis of assimilted Rainfor data into CARDAMOM DALEC
+```{r echo = FALSE, message=FALSE, fig.asp = 0.9, fig.width = 15}
+#load("R:/cssp_brazil/cssp_brazil_R/data/extracted_card.RData")
+#source('R:/cssp_brazil/cssp_brazil_R/code/extract_resample_plot.R') #imports plotting codes
+# source('R:/cssp_brazil/cssp_brazil_R/code/subset_pixel_functions.R') #imports plotting codes
+
+prefix_new <- 'M://CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/'
+midfix <- '_subset/RESULTS_PROCESSED/'
+suffix_new <- '_subset_stock_flux.RData'
+
+mod_var_new <- c('no_woody_data','esa_cci_agb_only',
+                 'Rainfor_woody_biomass_2010','Rainfor_woody_biomass_initial','Rainfor_woody_biomass_annual',
+                 'Rainfor_woody_mortality_only','Rainfor_woody_productivity_only',
+                 'Rainfor_woody_biomass_2010_productivity','Rainfor_woody_biomass_2010_and_mortality',
+                 'Rainfor_woody_biomass_initial_productivity','Rainfor_woody_biomass_annual_productivity',
+                 'Rainfor_woody_biomass_initial_mortality','Rainfor_woody_biomass_annual_mortality',
+                 'Rainfor_woody_productivity_and_mortality_only','Rainfor_woody_biomass_2010_productivity_mortality',
+                 'Rainfor_woody_biomass_initial_productivity_mortality','Rainfor_woody_biomass_annual_productivity_mortality'
+)
+mod_var_abr <- c('NWD','ECB','B_2010','B_i','B_a','M','P','B_2010_P','B_2010_M',
+                 'B_i_P','B_a_P','B_i_M','B_a_M','P_M','B_2010_P_M','B_i_P_M','B_a_P_M')
+par_names <- c('Lit2SOM (day_1)','GPP%Ra','NPP_fol_frac','NPP_root_frac','Leaf lifespan','TO Wood','TO Roots','Mineralise Lit','SOM2Rh',
+               'Temp fac','Canopy Eff (gC/m2leaf/day)','Max bud burst day','NPP_lab_frac','Labile_release_period','max leaf fall',
+               'leaf fall period','LMA (gC/m2)','Labile_initial','Foliar_initial','Roots_initial','Wood_initial','Lit_initial',
+               'SOM_initial','Soil Water_initial','Cwood_coarseR_frac','CoarseR Biomass 50% Max Depth','Max Root Depth',
+               'Res factor Burned Cstocks','CCF Fol','CCF Wood and FineR','CCF Soil','CCF Fol and FineR Lit','unknown','model_var')
+
+param_names <- c('model_var','Lit2SOM (day_1)','GPP%Ra','NPP_fol_frac','NPP_root_frac','Leaf lifespan','TO Wood','TO Roots','Mineralise Lit','SOM2Rh',
+               'Temp fac','Canopy Eff (gC/m2leaf/day)','Max bud burst day','NPP_lab_frac','Labile_release_period','max leaf fall',
+               'leaf fall period','LMA (gC/m2)','Labile_initial','Foliar_initial','Roots_initial','Wood_initial','Lit_initial',
+               'SOM_initial','Soil Water_initial','Cwood_coarseR_frac','CoarseR Biomass 50% Max Depth','Max Root Depth',
+               'Res factor Burned Cstocks','CCF Fol','CCF Wood and FineR','CCF Soil','CCF Fol and FineR Lit')
+
+model_pars_list <- list()
+model_pars_df<-as.data.frame(t(as.data.frame(extract_parameters_all_models(mod_var_new,mod_var_abr))), stringsAsFactors = FALSE)
+model_pars_df[] <- lapply(model_pars_df, type.convert, as.is = TRUE)
+rownames(model_pars_df)<-  seq_along(model_pars_df[,1])
+colnames(model_pars_df)<-  par_names
+model_pars_df$model_var<-as.factor(model_pars_df$model_var)
+model_pars_df<-model_pars_df[,c(34,1:32)]
+new_model_pars_df<-round_df(model_pars_df[,2:33], 3)
+rownames(new_model_pars_df)<-mod_var_new
+print(new_model_pars_df)
+plot_all_parameters(model_pars_df,param_names)
 
 ```
