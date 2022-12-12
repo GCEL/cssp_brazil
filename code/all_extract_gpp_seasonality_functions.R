@@ -192,3 +192,76 @@ all_reg_var_regres_run <- function(s,s2,cardamom_variables) {
   }
   return(rbind(nw_data,sw_data,ec_data,bs_data,gs_data))
 }
+
+##############################################
+###########Pixel based analysis###############
+##############################################
+extractfun <- function(m) {
+  tinfo <- summary(m)$sigma
+  r2 <- summary(m)$adj.r.squared
+  data.frame(Rsq = r2,Resid.se = tinfo)
+}
+run_all_var<- function(data,variables){
+  for (i in variables){
+    if (variables=='LAI'){
+      split_data_lm <- dlply(na.omit(data), .(cell_no,x,y), function(s) lm(gpp~lai, data=s))
+      gpp_lai_lm_summary<-ldply(split_data_lm, extractfun)
+      pixels_gpp_lai_lm_rsq_raster <- rasterFromXYZ(gpp_lai_lm_summary[,2:4])
+      pixels_gpp_lai_lm_rse_raster <- rasterFromXYZ(gpp_lai_lm_summary[,c(2:3,5)])
+      crs(pixels_gpp_lai_lm_rsq_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
+      crs(pixels_gpp_lai_lm_rse_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
+      par(mfrow = c(1,2),oma = c(0, 0, 2, 0))
+      plot(pixels_gpp_lai_lm_rsq_raster,main='R sq');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T)
+      plot(pixels_gpp_lai_lm_rse_raster,main='Residual SE');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T)
+      mtext(paste(i), line=-1, outer=TRUE, cex=1.5)
+    }
+    else if (variables=='CICA'){
+      split_data_lm <- dlply(na.omit(data), .(cell_no,x,y), function(s) lm(gpp~cica, data=s))
+      gpp_cica_lm_summary<-ldply(split_data_lm, extractfun)
+      pixels_gpp_cica_lm_rsq_raster <- rasterFromXYZ(gpp_cica_lm_summary[,2:4])
+      pixels_gpp_cica_lm_rse_raster <- rasterFromXYZ(gpp_cica_lm_summary[,c(2:3,5)])
+      crs(pixels_gpp_cica_lm_rsq_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
+      crs(pixels_gpp_cica_lm_rse_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
+      par(mfrow = c(1,2),oma = c(0, 0, 2, 0))
+      plot(pixels_gpp_cica_lm_rsq_raster,main='R sq');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T)
+      plot(pixels_gpp_cica_lm_rse_raster,main='Residual SE');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T)
+      mtext(paste(i), line=-1, outer=TRUE, cex=1.5)
+    }
+    else if (variables=='GSDSR'){
+      split_data_lm <- dlply(na.omit(data), .(cell_no,x,y), function(s) lm(gpp~gsdsr, data=s))
+      gpp_gsdsr_lm_summary<-ldply(split_data_lm, extractfun)
+      pixels_gpp_gsdsr_lm_rsq_raster <- rasterFromXYZ(gpp_gsdsr_lm_summary[,2:4])
+      pixels_gpp_gsdsr_lm_rse_raster <- rasterFromXYZ(gpp_gsdsr_lm_summary[,c(2:3,5)])
+      crs(pixels_gpp_gsdsr_lm_rsq_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
+      crs(pixels_gpp_gsdsr_lm_rse_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
+      par(mfrow = c(1,2),oma = c(0, 0, 2, 0))
+      plot(pixels_gpp_gsdsr_lm_rsq_raster,main='R sq');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T)
+      plot(pixels_gpp_gsdsr_lm_rse_raster,main='Residual SE');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T)
+      mtext(paste(i), line=-1, outer=TRUE, cex=1.5)
+    }
+    else if (variables=='APAR'){
+      split_data_lm <- dlply(na.omit(data), .(cell_no,x,y), function(s) lm(gpp~apar, data=s))
+      gpp_apar_lm_summary<-ldply(split_data_lm, extractfun)
+      pixels_gpp_apar_lm_rsq_raster <- rasterFromXYZ(gpp_apar_lm_summary[,2:4])
+      pixels_gpp_apar_lm_rse_raster <- rasterFromXYZ(gpp_apar_lm_summary[,c(2:3,5)])
+      crs(pixels_gpp_apar_lm_rsq_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
+      crs(pixels_gpp_apar_lm_rse_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
+      par(mfrow = c(1,2),oma = c(0, 0, 2, 0))
+      plot(pixels_gpp_apar_lm_rsq_raster,main='R sq');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T)
+      plot(pixels_gpp_apar_lm_rse_raster,main='Residual SE');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T)
+      mtext(paste(i), line=-1, outer=TRUE, cex=1.5)
+    }
+    else if (variables=='ET'){
+      split_data_lm <- dlply(na.omit(data), .(cell_no,x,y), function(s) lm(gpp~et, data=s))
+      gpp_et_lm_summary<-ldply(split_data_lm, extractfun)
+      pixels_gpp_et_lm_rsq_raster <- rasterFromXYZ(gpp_et_lm_summary[,2:4])
+      pixels_gpp_et_lm_rse_raster <- rasterFromXYZ(gpp_et_lm_summary[,c(2:3,5)])
+      crs(pixels_gpp_et_lm_rsq_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
+      crs(pixels_gpp_et_lm_rse_raster) <- '+proj=longlat +datum=WGS84 +no_defs'
+      par(mfrow = c(1,2),oma = c(0, 0, 2, 0))
+      plot(pixels_gpp_et_lm_rsq_raster,main='R sq');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T)
+      plot(pixels_gpp_et_lm_rse_raster,main='Residual SE');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T)
+      mtext(paste(i), line=-1, outer=TRUE, cex=1.5)
+    }
+  }
+}

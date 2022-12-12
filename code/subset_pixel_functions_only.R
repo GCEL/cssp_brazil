@@ -1,6 +1,6 @@
 #All codes being Used
 #install packages----
-library(ncdf4); library(raster); library(dplyr); library(ggplot2);library(ggpubr);library(quantreg);library(ggpp);library(rgeos);library(ggpmisc);library(rgdal);library(Metrics)
+# library(ncdf4); library(raster); library(dplyr); library(ggplot2);library(ggpubr);library(quantreg);library(ggpp);library(rgeos);library(ggpmisc);library(rgdal);library(Metrics)
 
 #done
 #data prep pre-cursors----
@@ -32,7 +32,7 @@ library(ncdf4); library(raster); library(dplyr); library(ggplot2);library(ggpubr
 # # plot(biommort_10_16_gCm2d,main='Woody Mortality 2010-2016 t/ha/year');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T);plot(amazonia_subset,add=T)
 # # plot(rt_amazon_00_09_year,main='Woody Residence Time 2000-2009 years');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T);plot(amazonia_subset,add=T)
 # # plot(rt_amazon_10_16_year,main='Woody Residence Time 2010-2016 years');plot(amazon_nw_poly,add=T);plot(amazon_sw_poly,add=T);plot(amazon_ec_poly,add=T);plot(amazon_bs_poly,add=T);plot(amazon_gs_poly,add=T);plot(amazonia_subset,add=T)
-# plot(rt_amazon_00_09_year,main='Woody Residence Time 2000-2009 years');plot(amazonia_subset,add=T)
+# 
 # 
 # reference_data<- c(biomass_amazon_gCm2,woodprod_00_09_gCm2d,woodprod_10_16_gCm2d,biommort_00_09_gCm2d,biommort_10_16_gCm2d,rt_amazon_00_09_year,rt_amazon_10_16_year)
 
@@ -1786,24 +1786,24 @@ one_function_to_plot_them_all <- function(region,cardamom_var,model_variant,refe
 #######################################################
 ###############extract model parameters################
 #######################################################
-prefix_new <- 'M://CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/'
-midfix <- '_subset/RESULTS_PROCESSED/'
-suffix_new <- '_subset_stock_flux.RData'
-
-mod_var_new <- c('no_woody_data','esa_cci_agb_only',
-                 'Rainfor_woody_biomass_2010','Rainfor_woody_biomass_initial','Rainfor_woody_biomass_annual',
-                 'Rainfor_woody_mortality_only','Rainfor_woody_productivity_only',
-                 'Rainfor_woody_biomass_2010_productivity','Rainfor_woody_biomass_2010_and_mortality',
-                 'Rainfor_woody_biomass_initial_productivity','Rainfor_woody_biomass_annual_productivity',
-                 'Rainfor_woody_biomass_initial_mortality','Rainfor_woody_biomass_annual_mortality',
-                 'Rainfor_woody_productivity_and_mortality_only','Rainfor_woody_biomass_2010_productivity_mortality',
-                 'Rainfor_woody_biomass_initial_productivity_mortality','Rainfor_woody_biomass_annual_productivity_mortality'
-)
-mod_var_abr <- c('NWD','ECB','B_2010','B_i','B_a','M','P','B_2010_P','B_2010_M',
-                 'B_i_P','B_a_P','B_i_M','B_a_M','P_M','B_2010_P_M','B_i_P_M','B_a_P_M')
+# prefix_new <- 'M://CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/'
+# midfix <- '_subset/RESULTS_PROCESSED/'
+# suffix_new <- '_subset_stock_flux.RData'
+# 
+# mod_var_new <- c('no_woody_data','esa_cci_agb_only',
+#                  'Rainfor_woody_biomass_2010','Rainfor_woody_biomass_initial','Rainfor_woody_biomass_annual',
+#                  'Rainfor_woody_mortality_only','Rainfor_woody_productivity_only',
+#                  'Rainfor_woody_biomass_2010_productivity','Rainfor_woody_biomass_2010_and_mortality',
+#                  'Rainfor_woody_biomass_initial_productivity','Rainfor_woody_biomass_annual_productivity',
+#                  'Rainfor_woody_biomass_initial_mortality','Rainfor_woody_biomass_annual_mortality',
+#                  'Rainfor_woody_productivity_and_mortality_only','Rainfor_woody_biomass_2010_productivity_mortality',
+#                  'Rainfor_woody_biomass_initial_productivity_mortality','Rainfor_woody_biomass_annual_productivity_mortality'
+# )
+# mod_var_abr <- c('NWD','ECB','B_2010','B_i','B_a','M','P','B_2010_P','B_2010_M',
+#                  'B_i_P','B_a_P','B_i_M','B_a_M','P_M','B_2010_P_M','B_i_P_M','B_a_P_M')
 
 model_pars_list <- list()
-# model_pars_list_sd <- list()
+# model_pars_list_sd <- list()  
 
 extract_parameters_all_models <- function (model_variant,model_variant_abr){
   for (i in seq_along(model_variant)) {
@@ -1861,16 +1861,15 @@ round_df <- function(x, digits) {
 #                'SOM_initial','Soil Water_initial','Cwood_coarseR_frac','CoarseR Biomass 50% Max Depth','Max Root Depth',
 #                'Res factor Burned Cstocks','CCF Fol','CCF Wood and FineR','CCF Soil','CCF Fol and FineR Lit','unknown','model_var')
 # # summary(model_pars_df)
-#
+# 
 # param_names <- c('model_var','Lit2SOM (day_1)','GPP%Ra','NPP_fol_frac','NPP_root_frac','Leaf lifespan','TO Wood','TO Roots','Mineralise Lit','SOM2Rh',
 #                'Temp fac','Canopy Eff (gC/m2leaf/day)','Max bud burst day','NPP_lab_frac','Labile_release_period','max leaf fall',
 #                'leaf fall period','LMA (gC/m2)','Labile_initial','Foliar_initial','Roots_initial','Wood_initial','Lit_initial',
 #                'SOM_initial','Soil Water_initial','Cwood_coarseR_frac','CoarseR Biomass 50% Max Depth','Max Root Depth',
 #                'Res factor Burned Cstocks','CCF Fol','CCF Wood and FineR','CCF Soil','CCF Fol and FineR Lit')
 
-# model_pars_df<-as.data.frame(t(data.frame(extract_parameters_all_models(mod_var_new,mod_var_abr))), stringsAsFactors = FALSE)
-model_pars_df<-as.data.frame(t(data.frame(extract_parameters_all_models(mod_var_new,mod_var_abr))), stringsAsFactors = FALSE)
-model_pars_df[] <- lapply(model_pars_df, type.convert, as.is = TRUE)
+# model_pars_df<-as.data.frame(t(as.data.frame(extract_parameters_all_models(mod_var_new,mod_var_abr))), stringsAsFactors = FALSE)
+# model_pars_df[] <- lapply(model_pars_df, type.convert, as.is = TRUE)
 # rownames(model_pars_df)<-  seq_along(model_pars_df[,1])
 # colnames(model_pars_df)<-  par_names
 # model_pars_df$model_var<-as.factor(model_pars_df$model_var)

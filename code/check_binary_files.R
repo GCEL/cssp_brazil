@@ -36,5 +36,11 @@ drivers_270_bn$obs[,13]
 drivers_696_nbe = read_binary_file_format("M://CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/nbe_data_alone/DATA/nbe_data_alone_00696.bin")
 drivers_696_nbe$obs[,35]
 
+drivers_270_eso$obs[,3]
+
 drivers_696_laic = read_binary_file_format("M://CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/no_woody_data_copernicus/DATA/no_woody_data_copernicus_00696.bin")
 drivers_696_laic$obs[,3]
+drivers_696_laim = read_binary_file_format("M://CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/no_woody_data_modis/DATA/no_woody_data_modis_00696.bin")
+drivers_696_laim$obs[,3]
+drivers_270_laim = read_binary_file_format("M://CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/no_woody_data_modis_subset/DATA/no_woody_data_modis_subset_00270.bin")
+drivers_270_laim$obs[,3]
