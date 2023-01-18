@@ -6,7 +6,7 @@
 #data prep pre-cursors----
 # amazonia_subset <- shapefile("R:/cssp_brazil/cssp_brazil_R/data/amazonia_subset.shp")
 # compare_var_names <- c('WOOD','NPP_wood_flx','OUTPUT_wood_flx','MTT_wood')
-# mod_var <- c('no_woody_data','esa_cci_biomass_only',
+# mod_var <- c('esa_cci_agb_nbe','esa_cci_biomass_only',
 #              'biomass_2010','biomass_initial','biomass_annual',
 #              'mortality_only','productivity_only',
 #              'biomass_2010_productivity','biomass_2010_mortality',
@@ -85,21 +85,7 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
       benchmark <- extract_subset(region,reference)
       df_benchmark <- as.data.frame(benchmark, xy=TRUE)
       for (i in model_variant) {
-        if (i=='no_woody_data') {
-          model <- collate_all_models_cwood(region,cardamom_var,i,reference,j)
-          model_res <- resample(model,benchmark)
-          model_res_df <- as.data.frame(model_res, xy=TRUE)
-          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
-          names(model_benchmark_df)<-c('x','y','benchmark',i)
-          model_benchmark_df<-na.omit(model_benchmark_df)
-          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 0)
-          assign(paste("plot", i, sep = "_"),
-                 plot(model_benchmark_df$no_woody_data, model_benchmark_df$benchmark, main="",xlab="No Woody Data", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000), 
-                      cex.lab=1.5, cex.axis=1.5)+
-                   abline(coef = c(0,1),col='red', lwd=3)+
-                   text(20000, 2000, paste('RMSE = ',model_rmse, sep=''), cex=1.5))
-        }
-        else if (i=='esa_cci_biomass_only') {
+        if (i=='esa_cci_biomass_only') {
           model <- collate_all_models_cwood(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
           model_res_df <- as.data.frame(model_res, xy=TRUE)
@@ -109,6 +95,20 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
           model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 0)
           assign(paste("plot", i, sep = "_"),
                  plot(model_benchmark_df$esa_cci_biomass_only, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(20000, 2000, paste('RMSE = ',model_rmse, sep=''), cex=1.5))
+        }
+        else if (i=='esa_cci_agb_nbe') {
+          model <- collate_all_models_cwood(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 0)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$esa_cci_agb_nbe, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass and NBE", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000), 
                       cex.lab=1.5, cex.axis=1.5)+
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(20000, 2000, paste('RMSE = ',model_rmse, sep=''), cex=1.5))
@@ -263,6 +263,20 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
           model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 0)
           assign(paste("plot", i, sep = "_"),
                  plot(model_benchmark_df$biomass_annual_productivity, model_benchmark_df$benchmark, main="",xlab="Biomass annual and Productivity only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(20000, 2000, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
+        }
+        else if (i=='biomass_annual_productivity_nbe') {
+          model <- collate_all_models_cwood(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 0)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$biomass_annual_productivity_nbe, model_benchmark_df$benchmark, main="",xlab="Biomass annual and Productivity only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000), 
                       cex.lab=1.5, cex.axis=1.5)+
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(20000, 2000, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
@@ -325,8 +339,8 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
         }
       }
       par(mfrow = c(5,5),oma = c(0, 0, 2, 0))
-      plot_no_woody_data
       plot_esa_cci_biomass_only
+      plot_esa_cci_agb_nbe
       plot_biomass_2010
       plot_biomass_initial
       plot_biomass_annual
@@ -338,6 +352,7 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
       plot_biomass_initial_productivity
       plot_biomass_annual_mortality
       plot_biomass_annual_productivity
+      plot_biomass_annual_productivity_nbe
       plot_productivity_mortality_only
       # plot_biomass_2010_productivity_mortality
       plot_biomass_initial_productivity_mortality
@@ -348,21 +363,7 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
       benchmark <- extract_subset(region,reference)
       df_benchmark <- as.data.frame(benchmark, xy=TRUE)
       for (i in model_variant) {
-        if (i=='no_woody_data') {
-          model <- collate_all_models_cwood(region,cardamom_var,i,reference,j)
-          model_res <- resample(model,benchmark)
-          model_res_df <- as.data.frame(model_res, xy=TRUE)
-          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
-          names(model_benchmark_df)<-c('x','y','benchmark',i)
-          model_benchmark_df<-na.omit(model_benchmark_df)
-          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 0)
-          assign(paste("plot", i, sep = "_"),
-                 plot(model_benchmark_df$no_woody_data, model_benchmark_df$benchmark, main="",xlab="No Woody Data", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000), 
-                      cex.lab=1.5, cex.axis=1.5)+
-                   abline(coef = c(0,1),col='red', lwd=3)+
-                   text(20000, 2000, paste('RMSE = ',model_rmse, sep=''), cex=1.5))
-        }
-        else if (i=='esa_cci_biomass_only') {
+        if (i=='esa_cci_biomass_only') {
           model <- collate_all_models_cwood(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
           model_res_df <- as.data.frame(model_res, xy=TRUE)
@@ -372,6 +373,20 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
           model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 0)
           assign(paste("plot", i, sep = "_"),
                  plot(model_benchmark_df$esa_cci_biomass_only, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(20000, 2000, paste('RMSE = ',model_rmse, sep=''), cex=1.5))
+        }
+        else if (i=='esa_cci_agb_nbe') {
+          model <- collate_all_models_cwood(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 0)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$esa_cci_agb_nbe, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass and NBE", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000), 
                       cex.lab=1.5, cex.axis=1.5)+
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(20000, 2000, paste('RMSE = ',model_rmse, sep=''), cex=1.5))
@@ -526,6 +541,20 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
           model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 0)
           assign(paste("plot", i, sep = "_"),
                  plot(model_benchmark_df$biomass_annual_productivity, model_benchmark_df$benchmark, main="",xlab="Biomass annual and Productivity only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(20000, 2000, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
+        }
+        else if (i=='biomass_annual_productivity_nbe') {
+          model <- collate_all_models_cwood(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 0)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$biomass_annual_productivity_nbe, model_benchmark_df$benchmark, main="",xlab="Biomass annual and Productivity only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,25000), ylim=c(0,25000), 
                       cex.lab=1.5, cex.axis=1.5)+
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(20000, 2000, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
@@ -602,8 +631,8 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
         }
       }
       par(mfrow = c(5,5),oma = c(0, 0, 2, 0))
-      plot_no_woody_data
       plot_esa_cci_biomass_only
+      plot_esa_cci_agb_nbe
       plot_biomass_2010
       plot_biomass_initial
       plot_biomass_annual
@@ -615,6 +644,7 @@ res_df_merge_plot_cwood <- function (region,cardamom_var,model_variant,reference
       plot_biomass_initial_productivity
       plot_biomass_annual_mortality
       plot_biomass_annual_productivity
+      plot_biomass_annual_productivity_nbe
       plot_productivity_mortality_only
       # plot_biomass_2010_productivity_mortality
       plot_biomass_initial_productivity_mortality
@@ -666,21 +696,7 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
       benchmark <- extract_subset(region,reference)
       df_benchmark <- as.data.frame(benchmark, xy=TRUE)
       for (i in model_variant) {
-        if (i=='no_woody_data') {
-          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
-          model_res <- resample(model,benchmark)
-          model_res_df <- as.data.frame(model_res, xy=TRUE)
-          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
-          names(model_benchmark_df)<-c('x','y','benchmark',i)
-          model_benchmark_df<-na.omit(model_benchmark_df)
-          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
-          assign(paste("plot", i, sep = "_"),
-                 plot(model_benchmark_df$no_woody_data, model_benchmark_df$benchmark, main="",xlab="No Woody Data", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4), 
-                      cex.lab=1.5, cex.axis=1.5)+
-                   abline(coef = c(0,1),col='red', lwd=3)+
-                   text(1, 3.5, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
-        }
-        else if (i=='esa_cci_biomass_only') {
+        if (i=='esa_cci_biomass_only') {
           model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
           model_res_df <- as.data.frame(model_res, xy=TRUE)
@@ -690,6 +706,20 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
           model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
           assign(paste("plot", i, sep = "_"),
                  plot(model_benchmark_df$esa_cci_biomass_only, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(1, 3.5, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
+        }
+        else if (i=='esa_cci_agb_nbe') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$esa_cci_agb_nbe, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass and NBE", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4), 
                       cex.lab=1.5, cex.axis=1.5)+
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(1, 3.5, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
@@ -848,6 +878,20 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(1, 3.5, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
         }
+        else if (i=='biomass_annual_productivity_nbe') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$biomass_annual_productivity_nbe, model_benchmark_df$benchmark, main="",xlab="Biomass annual and Productivity only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(1, 3.5, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
+        }
         else if (i=='productivity_mortality_only') {
           model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
@@ -906,8 +950,8 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
         }
       }
       par(mfrow = c(5,5),oma = c(0, 0, 2, 0))
-      plot_no_woody_data
       plot_esa_cci_biomass_only
+      plot_esa_cci_agb_nbe
       plot_biomass_2010
       plot_biomass_initial
       plot_biomass_annual
@@ -919,6 +963,7 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
       plot_biomass_initial_productivity
       plot_biomass_annual_mortality
       plot_biomass_annual_productivity
+      plot_biomass_annual_productivity_nbe
       plot_productivity_mortality_only
       # plot_biomass_2010_productivity_mortality
       plot_biomass_initial_productivity_mortality
@@ -929,21 +974,7 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
       benchmark <- extract_subset(region,reference)
       df_benchmark <- as.data.frame(benchmark, xy=TRUE)
       for (i in model_variant) {
-        if (i=='no_woody_data') {
-          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
-          model_res <- resample(model,benchmark)
-          model_res_df <- as.data.frame(model_res, xy=TRUE)
-          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
-          names(model_benchmark_df)<-c('x','y','benchmark',i)
-          model_benchmark_df<-na.omit(model_benchmark_df)
-          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
-          assign(paste("plot", i, sep = "_"),
-                 plot(model_benchmark_df$no_woody_data, model_benchmark_df$benchmark, main="",xlab="No Woody Data", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4), 
-                      cex.lab=1.5, cex.axis=1.5)+
-                   abline(coef = c(0,1),col='red', lwd=3)+
-                   text(1, 3.5, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
-        }
-        else if (i=='esa_cci_biomass_only') {
+        if (i=='esa_cci_biomass_only') {
           model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
           model_res_df <- as.data.frame(model_res, xy=TRUE)
@@ -953,6 +984,20 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
           model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
           assign(paste("plot", i, sep = "_"),
                  plot(model_benchmark_df$esa_cci_biomass_only, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(1, 3.5, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
+        }
+        else if (i=='esa_cci_agb_nbe') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$esa_cci_agb_nbe, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass and NBE", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4), 
                       cex.lab=1.5, cex.axis=1.5)+
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(1, 3.5, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
@@ -1111,6 +1156,20 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(1, 3.5, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
         }
+        else if (i=='biomass_annual_productivity_nbe') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$biomass_annual_productivity_nbe, model_benchmark_df$benchmark, main="",xlab="Biomass annual and Productivity only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,4), ylim=c(0,4), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(1, 3.5, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
+        }
         else if (i=='productivity_mortality_only') {
           model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
@@ -1169,8 +1228,8 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
         }
       }
       par(mfrow = c(5,5),oma = c(0, 0, 2, 0))
-      plot_no_woody_data
       plot_esa_cci_biomass_only
+      plot_esa_cci_agb_nbe
       plot_biomass_2010
       plot_biomass_initial
       plot_biomass_annual
@@ -1182,6 +1241,7 @@ res_df_merge_plot_npp_mort <- function (region,cardamom_var,model_variant,refere
       plot_biomass_initial_productivity
       plot_biomass_annual_mortality
       plot_biomass_annual_productivity
+      plot_biomass_annual_productivity_nbe
       plot_productivity_mortality_only
       # plot_biomass_2010_productivity_mortality
       plot_biomass_initial_productivity_mortality
@@ -1206,21 +1266,7 @@ res_df_merge_plot_rt <- function (region,cardamom_var,model_variant,reference,tp
       benchmark <- extract_subset(region,reference)
       df_benchmark <- as.data.frame(benchmark, xy=TRUE)
       for (i in model_variant) {
-        if (i=='no_woody_data') {
-          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
-          model_res <- resample(model,benchmark)
-          model_res_df <- as.data.frame(model_res, xy=TRUE)
-          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
-          names(model_benchmark_df)<-c('x','y','benchmark',i)
-          model_benchmark_df<-na.omit(model_benchmark_df)
-          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
-          assign(paste("plot", i, sep = "_"),
-                 plot(model_benchmark_df$no_woody_data, model_benchmark_df$benchmark, main="",xlab="No Woody Data", ylab="RAINFOR benchmark", pch=19, xlim=c(0,80), ylim=c(0,80), 
-                      cex.lab=1.5, cex.axis=1.5)+
-                   abline(coef = c(0,1),col='red', lwd=3)+
-                   text(60,10, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
-        }
-        else if (i=='esa_cci_biomass_only') {
+        if (i=='esa_cci_biomass_only') {
           model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
           model_res_df <- as.data.frame(model_res, xy=TRUE)
@@ -1230,6 +1276,20 @@ res_df_merge_plot_rt <- function (region,cardamom_var,model_variant,reference,tp
           model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
           assign(paste("plot", i, sep = "_"),
                  plot(model_benchmark_df$esa_cci_biomass_only, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,80), ylim=c(0,80), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(60,10, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
+        }
+        else if (i=='esa_cci_agb_nbe') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$esa_cci_agb_nbe, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass and NBE", ylab="RAINFOR benchmark", pch=19, xlim=c(0,80), ylim=c(0,80), 
                       cex.lab=1.5, cex.axis=1.5)+
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(60,10, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
@@ -1388,6 +1448,20 @@ res_df_merge_plot_rt <- function (region,cardamom_var,model_variant,reference,tp
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(60,10, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
         }
+        else if (i=='biomass_annual_productivity_nbe') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$biomass_annual_productivity_nbe, model_benchmark_df$benchmark, main="",xlab="Biomass annual and Productivity only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,80), ylim=c(0,80), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(60,10, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
+        }
         else if (i=='productivity_mortality_only') {
           model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
@@ -1446,8 +1520,8 @@ res_df_merge_plot_rt <- function (region,cardamom_var,model_variant,reference,tp
         }
       }
       par(mfrow = c(5,5),oma = c(0, 0, 2, 0))
-      plot_no_woody_data
       plot_esa_cci_biomass_only
+      plot_esa_cci_agb_nbe
       plot_biomass_2010
       plot_biomass_initial
       plot_biomass_annual
@@ -1459,6 +1533,7 @@ res_df_merge_plot_rt <- function (region,cardamom_var,model_variant,reference,tp
       plot_biomass_initial_productivity
       plot_biomass_annual_mortality
       plot_biomass_annual_productivity
+      plot_biomass_annual_productivity_nbe
       plot_productivity_mortality_only
       # plot_biomass_2010_productivity_mortality
       plot_biomass_initial_productivity_mortality
@@ -1469,21 +1544,7 @@ res_df_merge_plot_rt <- function (region,cardamom_var,model_variant,reference,tp
       benchmark <- extract_subset(region,reference)
       df_benchmark <- as.data.frame(benchmark, xy=TRUE)
       for (i in model_variant) {
-        if (i=='no_woody_data') {
-          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
-          model_res <- resample(model,benchmark)
-          model_res_df <- as.data.frame(model_res, xy=TRUE)
-          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
-          names(model_benchmark_df)<-c('x','y','benchmark',i)
-          model_benchmark_df<-na.omit(model_benchmark_df)
-          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
-          assign(paste("plot", i, sep = "_"),
-                 plot(model_benchmark_df$no_woody_data, model_benchmark_df$benchmark, main="",xlab="No Woody Data", ylab="RAINFOR benchmark", pch=19, xlim=c(0,80), ylim=c(0,80), 
-                      cex.lab=1.5, cex.axis=1.5)+
-                   abline(coef = c(0,1),col='red', lwd=3)+
-                   text(60,10, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
-        }
-        else if (i=='esa_cci_biomass_only') {
+        if (i=='esa_cci_biomass_only') {
           model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
           model_res_df <- as.data.frame(model_res, xy=TRUE)
@@ -1493,6 +1554,20 @@ res_df_merge_plot_rt <- function (region,cardamom_var,model_variant,reference,tp
           model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
           assign(paste("plot", i, sep = "_"),
                  plot(model_benchmark_df$esa_cci_biomass_only, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,80), ylim=c(0,80), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(60,10, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
+        }
+        else if (i=='esa_cci_agb_nbe') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$esa_cci_agb_nbe, model_benchmark_df$benchmark, main="",xlab="ESA CCI Biomass and NBE", ylab="RAINFOR benchmark", pch=19, xlim=c(0,80), ylim=c(0,80), 
                       cex.lab=1.5, cex.axis=1.5)+
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(60,10, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
@@ -1651,6 +1726,20 @@ res_df_merge_plot_rt <- function (region,cardamom_var,model_variant,reference,tp
                    abline(coef = c(0,1),col='red', lwd=3)+
                    text(60,10, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
         }
+        else if (i=='biomass_annual_productivity_nbe') {
+          model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
+          model_res <- resample(model,benchmark)
+          model_res_df <- as.data.frame(model_res, xy=TRUE)
+          model_benchmark_df <- merge(df_benchmark, model_res_df, by=c("x","y"))
+          names(model_benchmark_df)<-c('x','y','benchmark',i)
+          model_benchmark_df<-na.omit(model_benchmark_df)
+          model_rmse<- round(rmse(model_benchmark_df[,3],model_benchmark_df[,4]), digits = 2)
+          assign(paste("plot", i, sep = "_"),
+                 plot(model_benchmark_df$biomass_annual_productivity_nbe, model_benchmark_df$benchmark, main="",xlab="Biomass annual and Productivity only", ylab="RAINFOR benchmark", pch=19, xlim=c(0,80), ylim=c(0,80), 
+                      cex.lab=1.5, cex.axis=1.5)+
+                   abline(coef = c(0,1),col='red', lwd=3)+
+                   text(60,10, paste('RMSE = ',model_rmse, sep=''),cex=1.5))
+        }
         else if (i=='productivity_mortality_only') {
           model <- collate_all_models_npp_mort(region,cardamom_var,i,reference,j)
           model_res <- resample(model,benchmark)
@@ -1709,8 +1798,8 @@ res_df_merge_plot_rt <- function (region,cardamom_var,model_variant,reference,tp
         }
       }
       par(mfrow = c(5,5),oma = c(0, 0, 2, 0))
-      plot_no_woody_data
       plot_esa_cci_biomass_only
+      plot_esa_cci_agb_nbe
       plot_biomass_2010
       plot_biomass_initial
       plot_biomass_annual
@@ -1722,6 +1811,7 @@ res_df_merge_plot_rt <- function (region,cardamom_var,model_variant,reference,tp
       plot_biomass_initial_productivity
       plot_biomass_annual_mortality
       plot_biomass_annual_productivity
+      plot_biomass_annual_productivity_nbe
       plot_productivity_mortality_only
       # plot_biomass_2010_productivity_mortality
       plot_biomass_initial_productivity_mortality
@@ -1790,7 +1880,7 @@ one_function_to_plot_them_all <- function(region,cardamom_var,model_variant,refe
 # midfix <- '_subset/RESULTS_PROCESSED/'
 # suffix_new <- '_subset_stock_flux.RData'
 # 
-# mod_var_new <- c('no_woody_data','esa_cci_agb_only',
+# mod_var_new <- c('esa_cci_agb_nbe','esa_cci_agb_only',
 #                  'Rainfor_woody_biomass_2010','Rainfor_woody_biomass_initial','Rainfor_woody_biomass_annual',
 #                  'Rainfor_woody_mortality_only','Rainfor_woody_productivity_only',
 #                  'Rainfor_woody_biomass_2010_productivity','Rainfor_woody_biomass_2010_and_mortality',

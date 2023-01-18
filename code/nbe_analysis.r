@@ -11,7 +11,7 @@ library(ncdf4); library(raster); library(dplyr);library(ggplot2);library(ggpubr)
 
 nbe_stack<- stack(nbe_list)
 nbe_unc_stack<- stack(nbe_unc_list)
-
+values(nbe_unc_stack)[values(nbe_unc_stack)<0.1]=0.1
 
 layer_dates_2001_2019 <- getZ(cardamom_nppwood)
 layer_dates_2001_2019 <- paste("X",layer_dates_2001_2019,sep="")
@@ -24,11 +24,11 @@ layer_date_format_2015_2019 <- layer_date_format_2001_2019[169:228]
 names(nbe_stack) <- layer_dates_2015_2019;names(nbe_unc_stack) <- layer_dates_2015_2019;names(lai_b)<-layer_dates_2015_2019
 nbe_stack_15_19_monthly <- setZ(nbe_stack,layer_date_format_2015_2019,"Date");nbe_unc_stack_15_19_monthly <- setZ(nbe_unc_stack,layer_date_format_2015_2019,"Date")
 lai_stack_01_19_monthly <- setZ(lai_b,layer_date_format_2001_2019,"Date");lai_unc_stack_01_19_monthly <- setZ(lai_unc_b,layer_date_format_2001_2019,"Date")
-
+# values(nbe_unc_stack_15_19_monthly)[values(nbe_unc_stack_15_19_monthly)<0.1]=0.1
 nbe_prefix <- 'R://ILAMB_beta_devel/RAINFOR_leeds_run/nbe_analysis/'
 nbe_suffix <- '_Amazon_1deg_monthly_2001_updated_2019.nc'
-nbe_model_variants <- c('raw_GEOSCHEM','default_CARDAMOM','geoschem_CARDAMOM')
-lai_model_variants <- c('raw_COPERNICUS','default_CARDAMOM','geoschem_CARDAMOM')
+nbe_model_variants <- c('raw_GEOSCHEM','default_CARDAMOM','benchmark_CARDAMOM','geoschem_CARDAMOM','geoschem_benchmark_CARDAMOM')
+lai_model_variants <- c('raw_COPERNICUS','default_CARDAMOM','benchmark_CARDAMOM','geoschem_CARDAMOM','geoschem_benchmark_CARDAMOM')
 
 nbe_time_period <- c('2015-2019')
 amazonia_nbe_subset <- shapefile("R:/cssp_brazil/cssp_brazil_R/data/amazon_site_nbe_pixels.shp")
@@ -136,8 +136,8 @@ extract_unc_nbe_all_models <- function (model_variant,region,region_name,variabl
   }
   return(na.omit(cbind(df_data_region_1519,regional_name,date,month,year,model_variant_name)))
 }
-# nw_pixel_nbe <- extract_pixel_nbe_all_models(nbe_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],nbe_var[1],reference_nbe_data,nbe_time_period)
-# nw_pixel_nbe_unc <- extract_unc_nbe_all_models(nbe_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],nbe_var[2],reference_nbe_data,nbe_time_period)
+# nw_pixel_nbe <- extract_nbe_all_models(nbe_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],nbe_var[1],reference_nbe_data,nbe_time_period)
+nw_pixel_nbe_unc <- extract_unc_nbe_all_models(nbe_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],nbe_var[3],reference_nbe_data,nbe_time_period)
 
 ####extract for each region
 all_nbe_reg_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
@@ -253,7 +253,7 @@ all_pixel_reg_run <- function(model_variant,region,region_name,variable_name,ref
   return(region_pixel_model_data[,c(2:6,1,7,13)])
   # return(region_pixel_model_data)
 }
-# all_pixel_nbe <- all_pixel_reg_run(nbe_model_variants[1],nbe_pixel_data,nbe_pixel_names,nbe_var[1],reference_nbe_data,nbe_time_period)
+# all_pixel_nbe <- all_pixel_reg_run(nbe_model_variants[1],nbe_pixel_data,nbe_pixel_names,nbe_var,reference_nbe_data,nbe_time_period)
 # all_pixel_nbe_unc <- all_pixel_reg_run(nbe_model_variants[2],nbe_pixel_data,nbe_pixel_names,nbe_var,reference_nbe_data,nbe_time_period)
 
 ####extract for all model variations
@@ -289,6 +289,7 @@ all_nbe_pixel_model_var_run <- function(model_variant,region,region_name,variabl
   return(rbind(raw_nbe,default_nbe,geoschem_nbe))
 }
 
+#done
 ##########LAI##############
 ####extract lai data frame
 extract_lai_all_models <- function (model_variant,region,region_name,variable_name,reference,tp){

@@ -1,5 +1,5 @@
 ---
-title: "RAINFOR-LEEDS data summary"
+title: "RAINFOR Woody Biomass and GEOSCHEM NBE data summary"
 output:
   html_document:
     css: styles.css
@@ -16,7 +16,6 @@ output:
 library(ncdf4); library(raster); library(dplyr);library(ggplot2);library(ggpubr);library(quantreg);library(ggpp);library(rgeos);library(ggpmisc);library(rgdal);library(Metrics);library(kableExtra)
 
 ```
-
 
 Summary of raw RAINFOR biomass data as sent by Leeds after analysis. Plots of Above ground woody biomass in t/ha and woody productivity and mortalityt/ha/yr
 ```{r echo = FALSE, message=FALSE, fig.asp = 0.8, fig.width = 8}
@@ -44,17 +43,16 @@ biomass_amazon <- brick('R://brazil_leeds_maps/AbovegroundBiomass_Mg_perHa_111km
 # plot(biommort_10_16,main='Woody Mortality 2010-2016 t/ha/year')
 
 
-fmet<-c('','Mean','SD')
-fwb<-c('Woody Biomass',formatC(cellStats(biomass_amazon, 'mean'), format="f", big.mark=",", digits=0),formatC(cellStats(biomass_amazon, 'sd'), format="f", big.mark=",", digits=0))
-fwp1<-c('Woody Productivity 2000-2009',formatC(cellStats(woodprod_00_09, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(woodprod_00_09, 'sd'), format="f", digits=2))
-fwp2<-c('Woody Productivity 2010-2016',formatC(cellStats(woodprod_10_16, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(woodprod_10_16, 'sd'), format="f", digits=2))
-fwm1<-c('Woody Mortality 2000-2009',formatC(cellStats(biommort_00_09, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(biommort_00_09, 'sd'), format="f", digits=2))
-fwm2<-c('Woody Mortality 2010-2016',formatC(cellStats(biommort_10_16, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(biommort_10_16, 'sd'), format="f", digits=2))
-as.data.frame(bind_cols(fmet,fwb,fwp1,fwp2,fwm1,fwm2))
+# fmet<-c('','Mean','SD')
+# fwb<-c('Woody Biomass',formatC(cellStats(biomass_amazon, 'mean'), format="f", big.mark=",", digits=0),formatC(cellStats(biomass_amazon, 'sd'), format="f", big.mark=",", digits=0))
+# fwp1<-c('Woody Productivity 2000-2009',formatC(cellStats(woodprod_00_09, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(woodprod_00_09, 'sd'), format="f", digits=2))
+# fwp2<-c('Woody Productivity 2010-2016',formatC(cellStats(woodprod_10_16, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(woodprod_10_16, 'sd'), format="f", digits=2))
+# fwm1<-c('Woody Mortality 2000-2009',formatC(cellStats(biommort_00_09, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(biommort_00_09, 'sd'), format="f", digits=2))
+# fwm2<-c('Woody Mortality 2010-2016',formatC(cellStats(biommort_10_16, 'mean'), format="f", big.mark=",", digits=2),formatC(cellStats(biommort_10_16, 'sd'), format="f", digits=2))
+# as.data.frame(bind_cols(fmet,fwb,fwp1,fwp2,fwm1,fwm2))
 
 
 ```
-
 
 Mean and Std Dev. RAINFOR data after including BGB and converted to g.m-2 and g.m-2.d-1 
 ```{r echo = FALSE, message=FALSE}
@@ -187,9 +185,8 @@ compare_rainfor_card_mean <- data.frame(woody_var,rainfor_dat,rainfor_dat_min,ca
 compare_rainfor_card_mean
 ```
 
-Pixel-subset based analysis of assimilted Rainfor data into CARDAMOM DALEC
+Pixel-subset based analysis of assimilated RAINFOR data and GEOSCHEM NBE into CARDAMOM DALEC
 ```{r echo = FALSE, message=FALSE, fig.asp = 0.5, fig.width = 25}
-#load("R:/cssp_brazil/cssp_brazil_R/data/extracted_card.RData")
 prefix <- 'R://ILAMB_beta_devel/RAINFOR_leeds_run/cssp_brazil_amazon_run/DATA/benchmark/Amazon_subset_'
 suffix <- '_2000_updated_2019.nc'
 
@@ -201,11 +198,11 @@ source('R:/cssp_brazil/cssp_brazil_R/code/subset_pixel_functions_only.R') #impor
 
 amazonia_subset <- shapefile("R:/cssp_brazil/cssp_brazil_R/data/amazonia_subset.shp")
 compare_var_names <- c('WOOD','NPP_wood_flx','OUTPUT_wood_flx','MTT_wood')
-mod_var <- c('no_woody_data','esa_cci_biomass_only',
+mod_var <- c('esa_cci_biomass_only','esa_cci_agb_nbe',
              'biomass_2010','biomass_initial','biomass_annual',
              'mortality_only','productivity_only',
              'biomass_2010_productivity','biomass_2010_mortality',
-             'biomass_initial_productivity','biomass_annual_productivity',
+             'biomass_initial_productivity','biomass_annual_productivity','biomass_annual_productivity_nbe',
              'biomass_initial_mortality','biomass_annual_mortality',
              'productivity_mortality_only',
              'biomass_2010_productivity_mortality','biomass_initial_productivity_mortality','biomass_annual_productivity_mortality'
@@ -231,17 +228,17 @@ Pixel based analysis of assimilted Rainfor data into CARDAMOM DALEC
 #source('R:/cssp_brazil/cssp_brazil_R/code/extract_resample_plot.R') #imports plotting codes
 # source('R:/cssp_brazil/cssp_brazil_R/code/subset_pixel_functions.R') #imports plotting codes
 
-mod_var_new <- c('no_woody_data','esa_cci_agb_only',
+mod_var_new <- c('esa_cci_agb_only','esa_cci_agb_nbe',
                  'Rainfor_woody_biomass_2010','Rainfor_woody_biomass_initial','Rainfor_woody_biomass_annual',
                  'Rainfor_woody_mortality_only','Rainfor_woody_productivity_only',
                  'Rainfor_woody_biomass_2010_productivity','Rainfor_woody_biomass_2010_and_mortality',
-                 'Rainfor_woody_biomass_initial_productivity','Rainfor_woody_biomass_annual_productivity',
+                 'Rainfor_woody_biomass_initial_productivity','Rainfor_woody_biomass_annual_productivity','Rainfor_woody_biomass_annual_productivity_nbe',
                  'Rainfor_woody_biomass_initial_mortality','Rainfor_woody_biomass_annual_mortality',
                  'Rainfor_woody_productivity_and_mortality_only','Rainfor_woody_biomass_2010_productivity_mortality',
                  'Rainfor_woody_biomass_initial_productivity_mortality','Rainfor_woody_biomass_annual_productivity_mortality'
 )
-mod_var_abr <- c('NWD','ECB','B_2010','B_i','B_a','M','P','B_2010_P','B_2010_M',
-                 'B_i_P','B_a_P','B_i_M','B_a_M','P_M','B_2010_P_M','B_i_P_M','B_a_P_M')
+mod_var_abr <- c('ECB','ECB_N','B_2010','B_i','B_a','M','P','B_2010_P','B_2010_M',
+                 'B_i_P','B_a_P','B_a_P_N','B_i_M','B_a_M','P_M','B_2010_P_M','B_i_P_M','B_a_P_M')
 par_names <- c('Lit2SOM (day_1)','GPP%Ra','NPP_fol_frac','NPP_root_frac','Leaf lifespan','TO Wood','TO Roots','Mineralise Lit','SOM2Rh',
                'Temp fac','Canopy Eff (gC/m2leaf/day)','Max bud burst day','NPP_lab_frac','Labile_release_period','max leaf fall',
                'leaf fall period','LMA (gC/m2)','Labile_initial','Foliar_initial','Roots_initial','Wood_initial','Lit_initial',
