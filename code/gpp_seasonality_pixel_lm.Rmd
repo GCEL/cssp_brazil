@@ -1,0 +1,40 @@
+---
+title: "CARDAMOM-DALEC GPP Seasonality Drivers Pixel Linear Models"
+output:
+  html_document:
+    css: styles.css
+    df_print: paged
+---
+<style type="text/css">
+.main-container {
+  max-width: 1900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+```{r echo = FALSE, message=FALSE, warning=FALSE, fig.asp = 0.9, fig.width = 10}
+library('plyr');library('tidyverse');library('caret');library('leaps');library('raster')
+
+biomass_amazon <- brick('R://brazil_leeds_maps/AbovegroundBiomass_Mg_perHa_111km.tif')
+biomass_amazon_mask <- biomass_amazon > -Inf
+amazonia <- rasterToPolygons(biomass_amazon_mask, dissolve=TRUE)
+
+amazon_nw_poly <- shapefile("R:/cssp_brazil/cssp_brazil_R/data/amazon_nw.shp")
+amazon_sw_poly <- shapefile("R:/cssp_brazil/cssp_brazil_R/data/amazon_sw.shp")
+amazon_ec_poly <- shapefile("R:/cssp_brazil/cssp_brazil_R/data/amazon_ec.shp")
+amazon_bs_poly <- shapefile("R:/cssp_brazil/cssp_brazil_R/data/amazon_bs.shp")
+amazon_gs_poly <- shapefile("R:/cssp_brazil/cssp_brazil_R/data/amazon_gs.shp")
+
+var_names <- c('GPP','LAI','CICA','GSDSR','APAR','ET')
+reg_data <- list(amazon_nw_poly,amazon_sw_poly,amazon_ec_poly,amazon_bs_poly,amazon_gs_poly,amazonia)
+reg_names <- c('amazon_nw','amazon_sw','amazon_ec','amazon_bs','amazon_gs','amazonia')
+
+source('R:/cssp_brazil/cssp_brazil_R/code/all_extract_gpp_seasonality_functions.R')
+all_pixels_compare_data_zero <- readRDS("R:/cssp_brazil/cssp_brazil_R/data/extracted_variables.RDS")
+
+pred_var <- c('LAI','CICA','GSDSR','APAR','ET')
+amazonia_regres_data <- reg_card_var_regression(reg_data[[6]],reg_names[6],var_names)
+for (i in pred_var){
+  run_all_var(amazonia_regres_data,i)
+}
+```

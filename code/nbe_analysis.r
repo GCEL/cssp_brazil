@@ -137,7 +137,7 @@ extract_unc_nbe_all_models <- function (model_variant,region,region_name,variabl
   return(na.omit(cbind(df_data_region_1519,regional_name,date,month,year,model_variant_name)))
 }
 # nw_pixel_nbe <- extract_nbe_all_models(nbe_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],nbe_var[1],reference_nbe_data,nbe_time_period)
-nw_pixel_nbe_unc <- extract_unc_nbe_all_models(nbe_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],nbe_var[3],reference_nbe_data,nbe_time_period)
+# nw_pixel_nbe_unc <- extract_unc_nbe_all_models(nbe_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],nbe_var[3],reference_nbe_data,nbe_time_period)
 
 ####extract for each region
 all_nbe_reg_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
@@ -171,7 +171,7 @@ all_nbe_reg_run <- function(model_variant,region,region_name,variable_name,refer
 }
 # all_regional_nbe <- all_nbe_reg_run(nbe_model_variants[1],nbe_reg_data,nbe_reg_names,nbe_var[1],reference_nbe_data,nbe_time_period)
 
-all_pixel_reg_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
+all_nbe_pixel_reg_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
   for (j in variable_name) {
     if (j=='NBE') {
       for (i in region_name) {
@@ -253,8 +253,8 @@ all_pixel_reg_run <- function(model_variant,region,region_name,variable_name,ref
   return(region_pixel_model_data[,c(2:6,1,7,13)])
   # return(region_pixel_model_data)
 }
-# all_pixel_nbe <- all_pixel_reg_run(nbe_model_variants[1],nbe_pixel_data,nbe_pixel_names,nbe_var,reference_nbe_data,nbe_time_period)
-# all_pixel_nbe_unc <- all_pixel_reg_run(nbe_model_variants[2],nbe_pixel_data,nbe_pixel_names,nbe_var,reference_nbe_data,nbe_time_period)
+# all_pixel_nbe <- all_nbe_pixel_reg_run(nbe_model_variants[1],nbe_pixel_data,nbe_pixel_names,nbe_var,reference_nbe_data,nbe_time_period)
+# all_pixel_nbe_unc <- all_nbe_pixel_reg_run(nbe_model_variants[2],nbe_pixel_data,nbe_pixel_names,nbe_var,reference_nbe_data,nbe_time_period)
 
 ####extract for all model variations
 all_nbe_reg_model_var_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
@@ -265,28 +265,40 @@ all_nbe_reg_model_var_run <- function(model_variant,region,region_name,variable_
     else if(i=='default_CARDAMOM'){
       default_nbe <- all_nbe_reg_run(model_variant[2],region,region_name,variable_name,reference,tp)
     }
-    else if (i=='geoschem_CARDAMOM') {
-      geoschem_nbe <- all_nbe_reg_run(model_variant[3],region,region_name,variable_name,reference,tp)
+    else if (i=='benchmark_CARDAMOM') {
+      benchmark_nbe <- all_nbe_reg_run(model_variant[3],region,region_name,variable_name,reference,tp)
+    }
+    else if(i=='geoschem_CARDAMOM'){
+      geoschem_nbe <- all_nbe_reg_run(model_variant[4],region,region_name,variable_name,reference,tp)
+    }
+    else if (i=='geoschem_benchmark_CARDAMOM') {
+      geoschem_benchmark_nbe <- all_nbe_reg_run(model_variant[5],region,region_name,variable_name,reference,tp)
     }
   }
-  return(rbind(raw_nbe,default_nbe,geoschem_nbe))
+  return(rbind(raw_nbe,default_nbe,benchmark_nbe,geoschem_nbe,geoschem_benchmark_nbe))
 }
 
 all_nbe_pixel_model_var_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
   for (i in model_variant) {
     if(i=='raw_GEOSCHEM'){
-      raw_nbe <- all_pixel_reg_run(model_variant[1],region,region_name,variable_name,reference,tp)
+      raw_nbe <- all_nbe_pixel_reg_run(model_variant[1],region,region_name,variable_name,reference,tp)
       raw_nbe$nbe_2pt5pc<-raw_nbe$nbe-abs(raw_nbe$nbe_2pt5pc)
       raw_nbe$nbe_97pt5pc<-raw_nbe$nbe+abs(raw_nbe$nbe_97pt5pc)
     }
     else if(i=='default_CARDAMOM'){
-      default_nbe <- all_pixel_reg_run(model_variant[2],region,region_name,variable_name,reference,tp)
+      default_nbe <- all_nbe_pixel_reg_run(model_variant[2],region,region_name,variable_name,reference,tp)
     }
-    else if (i=='geoschem_CARDAMOM') {
-      geoschem_nbe <- all_pixel_reg_run(model_variant[3],region,region_name,variable_name,reference,tp)
+    else if (i=='benchmark_CARDAMOM') {
+      benchmark_nbe <- all_nbe_pixel_reg_run(model_variant[3],region,region_name,variable_name,reference,tp)
+    }
+    else if(i=='geoschem_CARDAMOM'){
+      geoschem_nbe <- all_nbe_pixel_reg_run(model_variant[4],region,region_name,variable_name,reference,tp)
+    }
+    else if (i=='geoschem_benchmark_CARDAMOM') {
+      geoschem_benchmark_nbe <- all_nbe_pixel_reg_run(model_variant[5],region,region_name,variable_name,reference,tp)
     }
   }
-  return(rbind(raw_nbe,default_nbe,geoschem_nbe))
+  return(rbind(raw_nbe,default_nbe,benchmark_nbe,geoschem_nbe,geoschem_benchmark_nbe))
 }
 
 #done
@@ -351,7 +363,7 @@ extract_unc_lai_all_models <- function (model_variant,region,region_name,variabl
   return(na.omit(cbind(df_data_region_1519,regional_name,date,month,year,model_variant_name)))
 }
 # nw_pixel_lai <- extract_lai_all_models(lai_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],lai_var[1],reference_nbe_data,nbe_time_period)
-nw_pixel_lai_unc <- extract_unc_lai_all_models(lai_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],lai_var[2],reference_nbe_data,nbe_time_period)
+# nw_pixel_lai_unc <- extract_unc_lai_all_models(lai_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],lai_var[2],reference_nbe_data,nbe_time_period)
 
 ####extract for each region
 all_lai_reg_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
@@ -385,7 +397,7 @@ all_lai_reg_run <- function(model_variant,region,region_name,variable_name,refer
 }
 # all_regional_lai <- all_lai_reg_run(lai_model_variants[1],nbe_reg_data,nbe_reg_names,lai_var[1],reference_nbe_data,nbe_time_period)
 
-all_pixel_reg_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
+all_lai_pixel_reg_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
   for (j in variable_name) {
   if (j=='LAI') {
     for (i in region_name) {
@@ -468,7 +480,7 @@ all_pixel_reg_run <- function(model_variant,region,region_name,variable_name,ref
   # return(region_pixel_model_data)
 }
 
-# all_pixel_lai_unc <- all_pixel_reg_run(lai_model_variants[1],nbe_pixel_data,nbe_pixel_names,lai_var,reference_nbe_data,nbe_time_period)
+# all_pixel_lai_unc <- all_lai_pixel_reg_run(lai_model_variants[1],nbe_pixel_data,nbe_pixel_names,lai_var,reference_nbe_data,nbe_time_period)
 
 ####extract for all model variations
 all_lai_reg_model_var_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
@@ -479,30 +491,43 @@ all_lai_reg_model_var_run <- function(model_variant,region,region_name,variable_
     else if(i=='default_CARDAMOM'){
       default_lai <- all_lai_reg_run(model_variant[2],region,region_name,variable_name,reference,tp)
     }
-    else if (i=='geoschem_CARDAMOM') {
-      geoschem_lai <- all_lai_reg_run(model_variant[3],region,region_name,variable_name,reference,tp)
+    else if (i=='benchmark_CARDAMOM') {
+      benchmark_lai <- all_lai_reg_run(model_variant[3],region,region_name,variable_name,reference,tp)
+    }
+    else if(i=='geoschem_CARDAMOM'){
+      geoschem_lai <- all_lai_reg_run(model_variant[4],region,region_name,variable_name,reference,tp)
+    }
+    else if (i=='geoschem_benchmark_CARDAMOM') {
+      geoschem_benchmark_lai <- all_lai_reg_run(model_variant[5],region,region_name,variable_name,reference,tp)
     }
   }
-  return(rbind(raw_lai,default_lai,geoschem_lai))
+  return(rbind(raw_lai,default_lai,benchmark_lai,geoschem_lai,geoschem_benchmark_lai))
 }
 
 all_lai_pixel_model_var_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
   for (i in model_variant) {
     if(i=='raw_COPERNICUS'){
-      raw_lai <- all_pixel_reg_run(model_variant[1],region,region_name,variable_name,reference,tp)
+      raw_lai <- all_lai_pixel_reg_run(model_variant[1],region,region_name,variable_name,reference,tp)
       raw_lai$lai_2pt5pc<-raw_lai$lai-abs(raw_lai$lai_2pt5pc)
       raw_lai$lai_97pt5pc<-raw_lai$lai+abs(raw_lai$lai_97pt5pc)
     }
     else if(i=='default_CARDAMOM'){
-      default_lai <- all_pixel_reg_run(model_variant[2],region,region_name,variable_name,reference,tp)
+      default_lai <- all_lai_pixel_reg_run(model_variant[2],region,region_name,variable_name,reference,tp)
     }
-    else if (i=='geoschem_CARDAMOM') {
-      geoschem_lai <- all_pixel_reg_run(model_variant[3],region,region_name,variable_name,reference,tp)
+    else if (i=='benchmark_CARDAMOM') {
+      benchmark_lai <- all_lai_pixel_reg_run(model_variant[3],region,region_name,variable_name,reference,tp)
+    }
+    else if(i=='geoschem_CARDAMOM'){
+      geoschem_lai <- all_lai_pixel_reg_run(model_variant[4],region,region_name,variable_name,reference,tp)
+    }
+    else if (i=='geoschem_benchmark_CARDAMOM') {
+      geoschem_benchmark_lai <- all_lai_pixel_reg_run(model_variant[5],region,region_name,variable_name,reference,tp)
     }
   }
-  return(rbind(raw_lai,default_lai,geoschem_lai))
+  return(rbind(raw_lai,default_lai,benchmark_lai,geoschem_lai,geoschem_benchmark_lai))
 }
 
+#done
 #### Run all analysis#### 
 #NBE
 all_regional_model_var_nbe <- all_nbe_reg_model_var_run(nbe_model_variants,nbe_reg_data,nbe_reg_names,nbe_var[1],reference_nbe_data,nbe_time_period)
@@ -519,7 +544,7 @@ all_regional_model_var_lai$month<-factor(all_regional_model_var_lai$month,levels
 all_pixels_model_var_lai_nd_unc <- all_lai_pixel_model_var_run(lai_model_variants,nbe_pixel_data,nbe_pixel_names,lai_var,reference_nbe_data,nbe_time_period)
 str(all_pixels_model_var_lai_nd_unc)
 
-
+#done
 #### Pixel Data manipulation and Plots #### 
 #### NBE
 # add date as new_date
@@ -536,8 +561,24 @@ ggplot(all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$regional_
   theme_test()
 
 ggplot(all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(x = new_date, y = nbe))+
+  geom_line(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='benchmark_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],position=position_dodge(0.1)) +
+  geom_ribbon(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='benchmark_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
+  geom_point(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],position=position_dodge(0.1)) +
+  geom_errorbar(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), width=.1, position=position_dodge(0.1)) +
+  facet_wrap(.~regional_name) +
+  theme_test()
+
+ggplot(all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(x = new_date, y = nbe))+
   geom_line(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='geoschem_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],position=position_dodge(0.1)) +
   geom_ribbon(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='geoschem_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
+  geom_point(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],position=position_dodge(0.1)) +
+  geom_errorbar(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), width=.1, position=position_dodge(0.1)) +
+  facet_wrap(.~regional_name) +
+  theme_test()
+
+ggplot(all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(x = new_date, y = nbe))+
+  geom_line(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='geoschem_benchmark_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],position=position_dodge(0.1)) +
+  geom_ribbon(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='geoschem_benchmark_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
   geom_point(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],position=position_dodge(0.1)) +
   geom_errorbar(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), width=.1, position=position_dodge(0.1)) +
   facet_wrap(.~regional_name) +
@@ -557,6 +598,14 @@ ggplot(all_pixels_model_var_lai_nd_unc,aes(x = new_date, y = lai))+
   theme_test()
 
 ggplot(all_pixels_model_var_lai_nd_unc,aes(x = new_date, y = lai))+
+  geom_line(data=all_pixels_model_var_lai_nd_unc[all_pixels_model_var_lai_nd_unc$model_variant_name=='benchmark_CARDAMOM',],position=position_dodge(0.1)) +
+  geom_ribbon(data=all_pixels_model_var_lai_nd_unc[all_pixels_model_var_lai_nd_unc$model_variant_name=='benchmark_CARDAMOM',],aes(ymin=lai_2pt5pc, ymax=lai_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
+  geom_point(data=all_pixels_model_var_lai_nd_unc[all_pixels_model_var_lai_nd_unc$model_variant_name=='raw_COPERNICUS',],position=position_dodge(0.1)) +
+  geom_errorbar(data=all_pixels_model_var_lai_nd_unc[all_pixels_model_var_lai_nd_unc$model_variant_name=='raw_COPERNICUS',],aes(ymin=lai_2pt5pc, ymax=lai_97pt5pc), width=.1, position=position_dodge(0.1)) +
+  facet_wrap(.~regional_name) +
+  theme_test()
+
+ggplot(all_pixels_model_var_lai_nd_unc,aes(x = new_date, y = lai))+
   geom_line(data=all_pixels_model_var_lai_nd_unc[all_pixels_model_var_lai_nd_unc$model_variant_name=='geoschem_CARDAMOM',],position=position_dodge(0.1)) +
   geom_ribbon(data=all_pixels_model_var_lai_nd_unc[all_pixels_model_var_lai_nd_unc$model_variant_name=='geoschem_CARDAMOM',],aes(ymin=lai_2pt5pc, ymax=lai_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
   geom_point(data=all_pixels_model_var_lai_nd_unc[all_pixels_model_var_lai_nd_unc$model_variant_name=='raw_COPERNICUS',],position=position_dodge(0.1)) +
@@ -564,6 +613,15 @@ ggplot(all_pixels_model_var_lai_nd_unc,aes(x = new_date, y = lai))+
   facet_wrap(.~regional_name) +
   theme_test()
 
+ggplot(all_pixels_model_var_lai_nd_unc,aes(x = new_date, y = lai))+
+  geom_line(data=all_pixels_model_var_lai_nd_unc[all_pixels_model_var_lai_nd_unc$model_variant_name=='geoschem_benchmark_CARDAMOM',],position=position_dodge(0.1)) +
+  geom_ribbon(data=all_pixels_model_var_lai_nd_unc[all_pixels_model_var_lai_nd_unc$model_variant_name=='geoschem_benchmark_CARDAMOM',],aes(ymin=lai_2pt5pc, ymax=lai_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
+  geom_point(data=all_pixels_model_var_lai_nd_unc[all_pixels_model_var_lai_nd_unc$model_variant_name=='raw_COPERNICUS',],position=position_dodge(0.1)) +
+  geom_errorbar(data=all_pixels_model_var_lai_nd_unc[all_pixels_model_var_lai_nd_unc$model_variant_name=='raw_COPERNICUS',],aes(ymin=lai_2pt5pc, ymax=lai_97pt5pc), width=.1, position=position_dodge(0.1)) +
+  facet_wrap(.~regional_name) +
+  theme_test()
+
+#done
 #### Summarise regional data####
 #summarise data
 ## Summarizes data.
@@ -710,16 +768,16 @@ ggplot(regional_annual_lai_summary, aes(x=year, y=lai, fill=model_variant_name))
   theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
-
+#done
 #### Extract model parameters ####
 source('R:/cssp_brazil/cssp_brazil_R/code/subset_pixel_functions_only.R')
 
 prefix_new <- 'M://CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/'
 midfix <- '/RESULTS_PROCESSED/'
-suffix_new <- '_stock_flux.RData'
+suffix <- '_stock_flux.RData'
 
-nbe_par_model_variants <- c('no_woody_data_copernicus','nbe_data_alone')
-nbe_par_model_variants_abr <- c('default_CARDAMOM','geoschem_CARDAMOM')
+nbe_par_model_variants <- c('no_woody_data_copernicus','Rainfor_woody_biomass_annual_productivity','nbe_data_alone','Rainfor_woody_biomass_annual_productivity_geoschem_nbe')
+nbe_par_model_variants_abr <- c('default_CARDAMOM','benchmark_CARDAMOM','geoschem_CARDAMOM','geoschem_benchmark_CARDAMOM')
 
 par_names <- c('Lit2SOM (day_1)','GPP%Ra','NPP_fol_frac','NPP_root_frac','Leaf lifespan','TO Wood','TO Roots','Mineralise Lit','SOM2Rh',
                'Temp fac','Canopy Eff (gC/m2leaf/day)','Max bud burst day','NPP_lab_frac','Labile_release_period','max leaf fall',
@@ -744,7 +802,10 @@ model_pars_df$rt_wood<-1/model_pars_df[,7]
 model_pars_df$rt_roots<-1/model_pars_df[,8]
 rownames(model_pars_df)<-nbe_par_model_variants_abr
 new_model_pars_df<-as.data.frame(t(model_pars_df)[c(2:34),])
-new_model_pars_df$default_CARDAMOM<-as.numeric(new_model_pars_df$default_CARDAMOM);new_model_pars_df$geoschem_CARDAMOM<-as.numeric(new_model_pars_df$geoschem_CARDAMOM)
+new_model_pars_df$default_CARDAMOM<-as.numeric(new_model_pars_df$default_CARDAMOM)
+new_model_pars_df$benchmark_CARDAMOM<-as.numeric(new_model_pars_df$benchmark_CARDAMOM)
+new_model_pars_df$geoschem_CARDAMOM<-as.numeric(new_model_pars_df$geoschem_CARDAMOM)
+new_model_pars_df$geoschem_benchmark_CARDAMOM<-as.numeric(new_model_pars_df$geoschem_benchmark_CARDAMOM)
 options(scipen = 100, digits = 4)
 
-# write.csv(new_model_pars_df,"nbe_analysis_model_param.csv")
+# write.csv(new_model_pars_df,"nbe_analysis_model_param_updated.csv")
