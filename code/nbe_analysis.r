@@ -137,7 +137,7 @@ extract_unc_nbe_all_models <- function (model_variant,region,region_name,variabl
   return(na.omit(cbind(df_data_region_1519,regional_name,date,month,year,model_variant_name)))
 }
 # nw_pixel_nbe <- extract_nbe_all_models(nbe_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],nbe_var[1],reference_nbe_data,nbe_time_period)
-# nw_pixel_nbe_unc <- extract_unc_nbe_all_models(nbe_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],nbe_var[3],reference_nbe_data,nbe_time_period)
+nw_pixel_nbe_unc <- extract_unc_nbe_all_models(nbe_model_variants[1],nbe_pixel_data[[1]],nbe_pixel_names[1],nbe_var[2],reference_nbe_data,nbe_time_period)
 
 ####extract for each region
 all_nbe_reg_run <- function(model_variant,region,region_name,variable_name,reference,tp) {
@@ -557,6 +557,7 @@ ggplot(all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$regional_
   geom_ribbon(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='default_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
   geom_point(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],position=position_dodge(0.1)) +
   geom_errorbar(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), width=.1, position=position_dodge(0.1)) +
+  labs(title= "Pixel Comparison GeosChem and Default CARDAMOM Net Biome Exhange Estimates", x="Year",y="NBE gC/m2/day")+
   facet_wrap(.~regional_name) +
   theme_test()
 
@@ -565,6 +566,7 @@ ggplot(all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$regional_
   geom_ribbon(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='benchmark_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
   geom_point(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],position=position_dodge(0.1)) +
   geom_errorbar(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), width=.1, position=position_dodge(0.1)) +
+  labs(title= "Pixel Comparison GeosChem and RAINFOR assimilated CARDAMOM Net Biome Exhange Estimates", x="Year",y="NBE gC/m2/day")+
   facet_wrap(.~regional_name) +
   theme_test()
 
@@ -573,6 +575,7 @@ ggplot(all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$regional_
   geom_ribbon(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='geoschem_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
   geom_point(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],position=position_dodge(0.1)) +
   geom_errorbar(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), width=.1, position=position_dodge(0.1)) +
+  labs(title= "Pixel Comparison GeosChem NBE and DALEC estimates", x="Year",y="NBE gC/m2/day")+
   facet_wrap(.~regional_name) +
   theme_test()
 
@@ -581,11 +584,40 @@ ggplot(all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$regional_
   geom_ribbon(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='geoschem_benchmark_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
   geom_point(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],position=position_dodge(0.1)) +
   geom_errorbar(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name !='amazon_nw',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), width=.1, position=position_dodge(0.1)) +
+  labs(title= "Pixel Comparison GeosChem and RAINFOR/GeosChem Assimilated CARDAMOM Net Biome Exhange Estimates", x="Year",y="NBE gC/m2/day")+
   facet_wrap(.~regional_name) +
   theme_test()
 
 all_pixels_model_var_lai_nd_unc<-all_pixels_model_var_lai_nd_unc %>% 
   mutate(new_date = ymd(date))
+
+####for CSSP presentation
+ggplot(all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],aes(x = new_date, y = nbe))+
+  geom_line(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='default_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],position=position_dodge(0.1)) +
+  geom_ribbon(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='default_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
+  geom_point(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],position=position_dodge(0.1)) +
+  geom_errorbar(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), width=.1, position=position_dodge(0.1)) +
+  labs(title= "Pixel Comparison GeosChem and Default CARDAMOM Net Biome Exhange Estimates", x="Year",y="NBE gC/m2/day")+
+  facet_wrap(.~regional_name) +
+  theme_test()
+
+ggplot(all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],aes(x = new_date, y = nbe))+
+  geom_line(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='benchmark_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],position=position_dodge(0.1)) +
+  geom_ribbon(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='benchmark_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
+  geom_point(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],position=position_dodge(0.1)) +
+  geom_errorbar(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), width=.1, position=position_dodge(0.1)) +
+  labs(title= "Pixel Comparison GeosChem and RAINFOR assimilated CARDAMOM Net Biome Exhange Estimates", x="Year",y="NBE gC/m2/day")+
+  facet_wrap(.~regional_name) +
+  theme_test()
+
+ggplot(all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],aes(x = new_date, y = nbe))+
+  geom_line(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='geoschem_benchmark_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],position=position_dodge(0.1)) +
+  geom_ribbon(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='geoschem_benchmark_CARDAMOM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), alpha = 0.3, fill = "red", color = "black", linetype = "dotted") + 
+  geom_point(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],position=position_dodge(0.1)) +
+  geom_errorbar(data=all_pixels_model_var_nbe_nd_unc[all_pixels_model_var_nbe_nd_unc$model_variant_name=='raw_GEOSCHEM'&all_pixels_model_var_nbe_nd_unc$regional_name =='amazon_gs',],aes(ymin=nbe_2pt5pc, ymax=nbe_97pt5pc), width=.1, position=position_dodge(0.1)) +
+  labs(title= "Pixel Comparison GeosChem and RAINFOR/GeosChem Assimilated CARDAMOM Net Biome Exhange Estimates", x="Year",y="NBE gC/m2/day")+
+  facet_wrap(.~regional_name) +
+  theme_test()
 
 #### LAI
 # plot them
@@ -633,7 +665,7 @@ ggplot(all_pixels_model_var_lai_nd_unc,aes(x = new_date, y = lai))+
 ##   conf.interval: the percent range of the confidence interval (default is 95%)
 summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
                       conf.interval=.95, .drop=TRUE) {
-  # library(plyr)
+  library(plyr)
   
   # New version of length which can handle NA's: if na.rm==T, don't count them
   length2 <- function (x, na.rm=FALSE) {
@@ -671,7 +703,37 @@ regional_monthly_nbe_summary<-summarySE(all_regional_model_var_nbe, measurevar="
 regional_annual_nbe_summary<-summarySE(all_regional_model_var_nbe, measurevar="nbe", groupvars=c("regional_name","model_variant_name", "year"))
 
 regional_monthly_nbe_summary$month<-factor(regional_monthly_nbe_summary$month,levels=c('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'))
+# regional_monthly_nbe_summary$model_variant_name<-factor(regional_monthly_nbe_summary$model_variant_name,levels=c('GEOSCHEM NBE','Default CARDAMOM NBE','GEOSCHEM Assimilated CARDAMOM NBE','RAINFOR Assimilated CARDAMOM NBE','GEOSCHEM and RAINFOR Assimilated CARDAMOM NBE'))
 regional_annual_nbe_summary$year<-factor(regional_annual_nbe_summary$year)
+
+ggplot(regional_monthly_nbe_summary[regional_monthly_nbe_summary$regional_name=='amazonia'& regional_monthly_nbe_summary$model_variant_name !='raw_GEOSCHEM',])  + 
+  geom_bar(data=regional_monthly_nbe_summary[regional_monthly_nbe_summary$regional_name=='amazonia'& regional_monthly_nbe_summary$model_variant_name !='raw_GEOSCHEM',],aes(x=month, y=nbe, fill=model_variant_name),position=position_dodge(),stat="identity")+
+  geom_errorbar(data=regional_monthly_nbe_summary[regional_monthly_nbe_summary$regional_name=='amazonia'& regional_monthly_nbe_summary$model_variant_name !='raw_GEOSCHEM',],aes(x=month,ymin=nbe-ci, ymax=nbe+ci, fill=model_variant_name),width=.2,position=position_dodge(.9))+
+  geom_line(data=regional_monthly_nbe_summary[regional_monthly_nbe_summary$regional_name=='amazonia'& regional_monthly_nbe_summary$model_variant_name =='raw_GEOSCHEM',],aes(x=month, y=nbe),color="red",size=1,group=1)+
+  geom_point(data=regional_monthly_nbe_summary[regional_monthly_nbe_summary$regional_name=='amazonia'& regional_monthly_nbe_summary$model_variant_name =='raw_GEOSCHEM',],aes(x=month, y=nbe))+
+  labs(title= "Test NBE", x="Month",y="NBE gC/m2/day")+ 
+  scale_fill_grey(start = 0.8, end = 0.2) +
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+ggplot(data=regional_monthly_nbe_summary[regional_monthly_nbe_summary$regional_name=='amazonia'& regional_monthly_nbe_summary$model_variant_name =='raw_GEOSCHEM',], aes(x=month, y=nbe))+ 
+  geom_bar(position=position_dodge(), stat="identity") + 
+  geom_errorbar(aes(ymin=nbe-ci, ymax=nbe+ci),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+ 
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+ggplot(data=regional_annual_nbe_summary[regional_annual_nbe_summary$regional_name=='amazonia'& regional_annual_nbe_summary$model_variant_name =='raw_GEOSCHEM',], aes(x=year, y=nbe))+ 
+  geom_bar(position=position_dodge(), stat="identity") + 
+  geom_errorbar(aes(ymin=nbe-ci, ymax=nbe+ci),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+ 
+  theme_bw() + 
+  theme(text = element_text(size = 16),panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
 # Use 95% confidence interval instead of SEM
 ggplot(regional_monthly_nbe_summary[regional_monthly_nbe_summary$regional_name=='amazonia',], aes(x=month, y=nbe, fill=model_variant_name))+ 
@@ -776,7 +838,7 @@ prefix_new <- 'M://CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHM
 midfix <- '/RESULTS_PROCESSED/'
 suffix <- '_stock_flux.RData'
 
-nbe_par_model_variants <- c('no_woody_data_copernicus','Rainfor_woody_biomass_annual_productivity','nbe_data_alone','Rainfor_woody_biomass_annual_productivity_geoschem_nbe')
+nbe_par_model_variants <- c('esa_cci_agb_only','Rainfor_woody_biomass_annual_productivity','nbe_data_alone','Rainfor_woody_biomass_annual_productivity_geoschem_nbe')
 nbe_par_model_variants_abr <- c('default_CARDAMOM','benchmark_CARDAMOM','geoschem_CARDAMOM','geoschem_benchmark_CARDAMOM')
 
 par_names <- c('Lit2SOM (day_1)','GPP%Ra','NPP_fol_frac','NPP_root_frac','Leaf lifespan','TO Wood','TO Roots','Mineralise Lit','SOM2Rh',
@@ -808,4 +870,4 @@ new_model_pars_df$geoschem_CARDAMOM<-as.numeric(new_model_pars_df$geoschem_CARDA
 new_model_pars_df$geoschem_benchmark_CARDAMOM<-as.numeric(new_model_pars_df$geoschem_benchmark_CARDAMOM)
 options(scipen = 100, digits = 4)
 
-# write.csv(new_model_pars_df,"nbe_analysis_model_param_updated.csv")
+write.csv(new_model_pars_df,"nbe_analysis_model_param_updated_3.csv")
