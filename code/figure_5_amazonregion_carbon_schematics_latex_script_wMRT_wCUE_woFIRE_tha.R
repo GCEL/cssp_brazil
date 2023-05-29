@@ -3,11 +3,14 @@
 ## Script for the creation of a latex script to generate C-budgets for DALEC
 ## Author: T L Smallman (t.l.smallman@ed.ac.uk)
 ## Created: 12/07/2022
-## Last updated: 14/07/2022
-## Contributing authors: 
+## Last updated: 29/05/2023
+## Updated by: C J Nwobi (nwobicj@gmail.com) 
 ## NOTES: 
 ## 1) This version presents a combined labile and foliage pool. 
 ## 2) Assumes a CDEA style phenology with both direct GPP to foliage and via labile pathways
+## 3) This includes CUE and Mean residence time (MRT) rather than Meam Transient time (MTT)
+## 4) Only use if Fire and Biomass removals have been excluded from CARDAMOM-DALEC runs
+## 5) Creates different latex files based on number of sub-regions
 ###
 
 ###
@@ -17,34 +20,35 @@
 setwd("/home/cnwobi/CARDAMOM/CARDAMOM/")
 
 # Load R libraries
-
-# Load user defined functions
-#source("./R_functions/load_all_cardamom_functions.r")
-
-# Define the output file name for the created script
-# outfilename = "latex_C_budget_v1.tex"
-
-###
-## Load files from which C-budget is extracted, prepare C-budget values
 library(rgdal);library(raster)
 
-#biomass t/ha
-biomass_amazon <- brick('/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/AbovegroundBiomass_Mg_perHa_111km.tif')
+# Load user defined functions
+source("./R_functions/load_all_cardamom_functions.r")
+
+###
+## Load files of entire region over which CARDAMOM ran and sub regions interested in (found in shape_files_for_analysis)  
 amazon_nw_poly <- shapefile("/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazon_nw.shp")
 amazon_sw_poly <- shapefile("/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazon_sw.shp")
 amazon_ec_poly <- shapefile("/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazon_ec.shp")
 amazon_bs_poly <- shapefile("/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazon_bs.shp")
 amazon_gs_poly <- shapefile("/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazon_gs.shp")
+
+#load raster files of extrapolated RAINFOR data (contact university of leeds for data David Galbraith- D.R.Galbraith@leeds.ac.uk)
+biomass_amazon <- brick('/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/AbovegroundBiomass_Mg_perHa_111km.tif')
 biomass_amazon_C_ifl<-brick("/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/biomass_ifl_subset.tif")
 
+#create shape file from RAINFOR data
 biomass_amazon_mask <- biomass_amazon > -Inf
 biomass_amazon_mask_pol <- rasterToPolygons(biomass_amazon_mask, dissolve=TRUE)
 
+#re-create raster of amazonian region and assign value
 amazon_region_new <- extent(biomass_amazon_C_ifl)
 r_amazon_region_new <- raster(amazon_region_new,res=1)
 values(r_amazon_region_new) <- 0
 r_amazon_region_final <- rasterize(biomass_amazon_mask_pol,r_amazon_region_new)
 
+#function to subset amazonia region based on ecoregions shape files
+#a<-amazonian extent, s<-amazonia ecoregion
 country_to_amazon_crop_fun <- function(a,s) { 
   cropped <- crop(a, extent(s))
   masked1 <- mask(cropped, s)
@@ -58,12 +62,14 @@ amazon_ec_pol_mask <- country_to_amazon_crop_fun(biomass_amazon_C_ifl,amazon_ec_
 amazon_bs_pol_mask <- country_to_amazon_crop_fun(biomass_amazon_C_ifl,amazon_bs_poly)
 amazon_gs_pol_mask <- country_to_amazon_crop_fun(biomass_amazon_C_ifl,amazon_gs_poly)
 
+#create raster of amazonia and ecoregions with values assigned to each region
 r_amazonia_nw <- mask(r_amazon_region_final, amazon_nw_pol_mask, updatevalue=0)
 r_amazonia_sw <- mask(r_amazonia_nw, amazon_sw_pol_mask, inverse=T, updatevalue=2)
 r_amazonia_bs <- mask(r_amazonia_sw, amazon_bs_pol_mask, inverse=T, updatevalue=3)
 r_amazonia_ec <- mask(r_amazonia_bs, amazon_ec_pol_mask, inverse=T, updatevalue=4)
 r_amazonia_ecoregions <- mask(r_amazonia_ec, amazon_gs_pol_mask, inverse=T, updatevalue=5)
 
+#create matix to match matrix of CARDAMOM outputs and quantiles wanted
 amazonia_ecoregions_matrix <- t(as.matrix(flip(r_amazonia_ecoregions,2)))
 
 amazonia_ecoregions_matrices <- array(numeric(),c(37,32,3)) 
@@ -71,8 +77,9 @@ amazonia_ecoregions_matrices[,,1]<-amazonia_ecoregions_matrix
 amazonia_ecoregions_matrices[,,2]<-amazonia_ecoregions_matrix
 amazonia_ecoregions_matrices[,,3]<-amazonia_ecoregions_matrix
 
-ecoregion_names <- c('northwest','southwest','brazilshield','eastcentral','guyanashield')
+ecoregion_names <- c('northwest','southwest','brazilshield','eastcentral','guyanashield') #ecoregion names
 
+###loop run for each ecoregion
 for (e in ecoregion_names) {
   if (e =='northwest') {
     region_mask <- amazonia_ecoregions_matrices==1
@@ -90,17 +97,17 @@ for (e in ecoregion_names) {
     region_mask <- amazonia_ecoregions_matrices==5
   }
   
-# region_mask <- amazonia_ecoregions_matrices==1
-
-# Load information file
+###
+## Load files from which C-budget is extracted, prepare C-budget values
+  # Load information file found in amazonia_ifl_cardamom_runs zip folder
 # load("/home/cnwobi/CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/amazonia_ifl_esa_cci_agb_nomngt/infofile.RData")
 # load("/home/cnwobi/CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/amazonia_ifl_rainfor_biomass_productivity_2005_nomngt/infofile.RData")
 # load("/home/cnwobi/CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/amazonia_ifl_rainfor_biomass_annual_productivity_nomngt/infofile.RData")
 load("/home/cnwobi/CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/amazonia_ifl_rainfor_biomass_annual_nomngt/infofile.RData")
   
 # Define the output file name for the created script
-# outfilename = paste("nw_wcue_wmtt_",PROJECT$name,"_latex_C_budget.tex",sep="")
 outfilename = paste(e,"_tha_wcue_wMRT_",PROJECT$name,"_latex_C_budget.tex",sep="")
+
 #
 # If this is a site analysis 
 # which site are we using?

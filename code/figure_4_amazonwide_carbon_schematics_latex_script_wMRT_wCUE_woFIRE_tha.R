@@ -3,11 +3,13 @@
 ## Script for the creation of a latex script to generate C-budgets for DALEC
 ## Author: T L Smallman (t.l.smallman@ed.ac.uk)
 ## Created: 12/07/2022
-## Last updated: 14/07/2022
-## Contributing authors: 
+## Last updated: 29/05/2023
+## Updated by: C J Nwobi (nwobicj@gmail.com) 
 ## NOTES: 
 ## 1) This version presents a combined labile and foliage pool. 
 ## 2) Assumes a CDEA style phenology with both direct GPP to foliage and via labile pathways
+## 3) This includes CUE and Mean residence time (MRT) rather than Meam Transient time (MTT)
+## 4) Only use if Fire and Biomass removals have been excluded from CARDAMOM-DALEC runs
 ###
 
 ###
@@ -19,17 +21,14 @@ setwd("/home/cnwobi/CARDAMOM/CARDAMOM/")
 # Load R libraries
 
 # Load user defined functions
-#source("./R_functions/load_all_cardamom_functions.r")
+source("./R_functions/load_all_cardamom_functions.r")
 
 # Define the output file name for the created script
 # outfilename = "latex_C_budget_v1.tex"
 
 ###
 ## Load files from which C-budget is extracted, prepare C-budget values
-
-#biomass t/ha
-
-# Load information file
+# Load information file found in amazonia_ifl_cardamom_runs zip folder
 # load("/home/cnwobi/CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/amazonia_ifl_esa_cci_agb_nomngt/infofile.RData")
 # load("/home/cnwobi/CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/amazonia_ifl_rainfor_biomass_productivity_2005_nomngt/infofile.RData")
 # load("/home/cnwobi/CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/amazonia_ifl_rainfor_biomass_annual_productivity_nomngt/infofile.RData")

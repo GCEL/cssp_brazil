@@ -4,14 +4,18 @@ library(ncdf4); library(raster); library(dplyr); library(ggplot2);library(ggpubr
 
 #done
 ######Read in shape files ###########
-compare_var_names <- c('WOOD','NPP_wood_flx','OUTPUT_wood_flx','MTT_wood')
+compare_var_names <- c('WOOD','NPP_wood_flx','OUTPUT_wood_flx','MTT_wood') #parameters for comparisons
+
+## load shape files of Amazonian extent and sub regions [found in shape_files_for_analysis]
 amazonia_nw <- shapefile("/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazon_nw.shp")
 amazonia_sw <- shapefile("/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazon_sw.shp")
 amazonia_ec <- shapefile("/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazon_ec.shp")
 amazonia_bs <- shapefile("/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazon_bs.shp")
 amazonia_gs <- shapefile("/exports/csce/datastore/geos/groups/gcel/cssp_rainfor_amazon_brazil/rainfor_leeds_data/modified_for_CARDAMOM/amazon_gs.shp")
-amazonia_ifl_layer <- shapefile("R:/brazil_leeds_maps/ifl_2000_amazonia.shp")
-amazonia_extent <- shapefile("./data/amazonia_extent")
+amazonia_ifl_layer <- shapefile("R:/brazil_leeds_maps/ifl_2000_amazonia.shp") #import Intact forest layers across amazon source: Potapov, P., Yaroshenko, A., Turubanova, S., Dubinin, M., Laestadius, L., Thies, C., Aksenov, D., Egorov, A., Yesipova, Y., Glushkov, I., Karpachevskiy, M., Kostikova, A., Manisha A., Tsybikova, E. & Zhuravleva, I. (2008) Mapping the world’s intact forest landscapes by remote sensing. Ecology and Society, 13(2), 51.
+amazonia_extent <- shapefile("./data/amazonia_extent") 
+
+#read in extrapolated RAINFOR data (contact university of leeds for data David Galbraith- D.R.Galbraith@leeds.ac.uk)
 #wood productivity t/ha/year
 woodprod_00_09 <- brick('R://brazil_leeds_maps/WoodyProductivity20002009_Mg_perHa_perYear_111km.tif')
 #biomass mortality t/ha/year
@@ -20,11 +24,11 @@ biommort_00_09 <- brick('R://brazil_leeds_maps/BiomassMortality_20002009_Mg_perH
 biomass_amazon <- brick('R://brazil_leeds_maps/AbovegroundBiomass_Mg_perHa_111km.tif')
 
 #functions for modification
-thayr_to_gCm2day_fun <- function(x) {
+thayr_to_gCm2day_fun <- function(x) { #convert t/ha/year to gC/m2/day
   x *0.48 * (100/365.25) }
-tha_to_gCm2_fun <- function(x) {
+tha_to_gCm2_fun <- function(x) { #convert t/ha to gC/m2
   x *0.48 * 100 }
-bgb_inclusion <- function(x){
+bgb_inclusion <- function(x){ #include belowground biomass
   x+(0.489 * x ** 0.89)
 }
 
@@ -41,14 +45,15 @@ biomass_amazon_gCm2 <- calc(biomass_amazon, tha_to_gCm2_fun)
 woodprod_00_09_gCm2d <- calc(woodprod_00_09, thayr_to_gCm2day_fun)
 biommort_00_09_gCm2d <- calc(biommort_00_09, thayr_to_gCm2day_fun)
 
-reg_data <- list(amazonia_nw,amazonia_sw,amazonia_ec,amazonia_bs,amazonia_gs,amazonia)
-reg_names <- c('amazon_nw','amazon_sw','amazon_ec','amazon_bs','amazon_gs','amazonia')
-prefix <- 'R://ILAMB_beta_devel/RAINFOR_leeds_run/cssp_brazil_amazon_run/amazonia_ifl_'
-suffix <- '_nomngt_2000_updated_2010.nc'
-updated_mod_var <- c('esa_cci_agb','rainfor_biomass_annual','rainfor_biomass_productivity_2005','rainfor_biomass_annual_productivity')
+reg_data <- list(amazonia_nw,amazonia_sw,amazonia_ec,amazonia_bs,amazonia_gs,amazonia) #create a list of regional shape files
+reg_names <- c('amazon_nw','amazon_sw','amazon_ec','amazon_bs','amazon_gs','amazonia') #names of regions
+prefix <- 'R://ILAMB_beta_devel/RAINFOR_leeds_run/cssp_brazil_amazon_run/amazonia_ifl_' #prefix of file location edit as necessary
+suffix <- '_nomngt_2000_updated_2010.nc' #suffix of file name and location
+updated_mod_var <- c('esa_cci_agb','rainfor_biomass_annual','rainfor_biomass_productivity_2005','rainfor_biomass_annual_productivity') #CARDAMOM run variants
 
-reference_data<- c(biomass_amazon_gCm2,woodprod_00_09_gCm2d,biommort_00_09_gCm2d,rt_amazon_00_09_year)
+reference_data<- c(biomass_amazon_gCm2,woodprod_00_09_gCm2d,biommort_00_09_gCm2d,rt_amazon_00_09_year) #create list of benchmark data for comparison
 
+#extract subset of raster data (reference) based on a regional shapefile (region)
 extract_subset <- function (region,reference){
   masked1 <- mask(reference, region)
   masked2 <- masked1 > -Inf
@@ -57,12 +62,13 @@ extract_subset <- function (region,reference){
   return(data_region)
 }
 
+#create subset of RAINFOR data based on Intact forest layers
 reference_data_ifl <- c(extract_subset(amazonia_ifl_layer,reference_data[[1]]),
                         extract_subset(amazonia_ifl_layer,reference_data[[2]]),
                         extract_subset(amazonia_ifl_layer,reference_data[[3]]),
                         extract_subset(amazonia_ifl_layer,reference_data[[4]]))
 
-######function to extract country amazon regions#######
+######function to extract RAINFOR amazon regions and correct units#######
 extract_benchmark_ecoregion <- function (cardamom_var,reference,ecoregions){
   masked1 <- mask(reference, ecoregions)
   masked2 <- masked1 > -Inf
@@ -80,6 +86,10 @@ extract_benchmark_ecoregion <- function (cardamom_var,reference,ecoregions){
   return(data_region)
 }
 
+#extract model variants and parameters
+#reion: amazonia_ifl_layer (amazonian ifl layer)/cardamom_var: compare_var_names (cardamom paramters for comparison)
+#model_variant: updated_mod_var (CARDAMOM run variants), reference: reference_data_ifl (RAINFOR extrapolated data for comparison)
+#ecoregions: reg_data(amazonian ecoregions), ecoregions_names: reg_names (names of amazonian ecoregions)
 extract_models_ifl <- function (region,cardamom_var,model_variant,reference,ecoregions,ecoregions_names){
   for (i in model_variant) {
     data <- brick(paste(prefix,i,suffix,sep=""),varname=cardamom_var)
@@ -172,14 +182,6 @@ merge_pixel_var_bench_mod_ecoregions <- function (region,cardamom_var,model_vari
     }
   }
   return(rbind(nw_data,sw_data,ec_data,bs_data,gs_data))
-}
-
-extract_model_pval <- function (modelobject) {
-  if (class(modelobject) != "lm") stop("Not an object of class 'lm' ")
-  f <- summary(modelobject)$fstatistic
-  p <- pf(f[1],f[2],f[3],lower.tail=F)
-  attributes(p) <- NULL
-  return(p)
 }
 
 new_function_to_plot_them_all <- function(region,cardamom_var,model_variant,reference,ecoregions,ecoregions_names) {
@@ -436,4 +438,5 @@ new_function_to_plot_them_all <- function(region,cardamom_var,model_variant,refe
   }
 }
 
+#run function to plot all 4 CARDAMOM runs against extrapolated RAINFOR amazonian data
 new_function_to_plot_them_all(amazonia_ifl_layer,compare_var_names[4],updated_mod_var,reference_data_ifl,reg_data,reg_names)

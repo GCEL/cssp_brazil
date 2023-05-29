@@ -1,13 +1,17 @@
 
-cardamom_model_exp <- c('C','R0','R1','R2')
-par_meanvi_names<-c('cue','nppfol_frac','npproots_frac','nppwood_frac','mrtwood','mrtroots')
-new_mod_var <- c("esa_cci_agb","rainfor_biomass_annual","rainfor_biomass_productivity_2005","rainfor_biomass_annual_productivity")
+#install packages
+library(ncdf4); library(raster); library(dplyr); library(ggplot2);library(ggpubr);library(quantreg);library(ggpp);library(rgeos);library(ggpmisc);library(rgdal);library(Metrics);library(gridExtra);library(grid)
 
-par_med_95ci_df <- data.frame(matrix(nrow=6,ncol=4))
+#define terms
+cardamom_model_exp <- c('C','R0','R1','R2') #representation of each CARDAMOM run variants
+par_meanvi_names<-c('cue','nppfol_frac','npproots_frac','nppwood_frac','mrtwood','mrtroots') #parameters to extract
+new_mod_var <- c("esa_cci_agb","rainfor_biomass_annual","rainfor_biomass_productivity_2005","rainfor_biomass_annual_productivity") #index of the CARDAMOM run variations
+
+par_med_95ci_df <- data.frame(matrix(nrow=6,ncol=4)) #rows=parameters; columns=model variant names
 colnames(par_med_95ci_df) <- cardamom_model_exp
 rownames(par_med_95ci_df) <- par_meanvi_names
 
-for (i in cardamom_model_exp) {
+for (i in cardamom_model_exp) {#loop over all 4 CARDAMOM run variants found in amazonia_ifl_cardamom_runs zip folder
     if (i =='C') {
       load("M://CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/amazonia_ifl_esa_cci_agb_nomngt//infofile.RData")
       load(paste("M://CARDAMOM/CARDAMOM/CARDAMOM_OUTPUTS/DALEC_CDEA_ACM2_BUCKET_MHMCMC/amazonia_ifl_esa_cci_agb_nomngt/RESULTS_PROCESSED/","amazonia_ifl_esa_cci_agb_nomngt","_stock_flux.RData",sep=""))
@@ -29,12 +33,13 @@ for (i in cardamom_model_exp) {
       print(paste('CARDAMOM',i,sep=" "))
     }
 
-# NPP Fractions
+  quantiles_wanted<- c(1,4,7) #quantiles of 2.5, 50 and 97.5%
+  dp <-2 #decimal places
+# Extract parameters from grid_output
 cue <- format(round(apply(grid_output$mean_cue[,,quantiles_wanted],3,mean, na.rm=TRUE), digits = 2), nsmall = dp) 
 nppfol <- format(round(apply(grid_output$NPP_foliage_fraction[,,quantiles_wanted],3,mean, na.rm=TRUE), digits = 2), nsmall = dp) 
 npproots <- format(round(apply(grid_output$NPP_roots_fraction[,,quantiles_wanted],3,mean, na.rm=TRUE), digits = 2), nsmall = dp) 
 nppwood <- format(round(apply(grid_output$NPP_wood_fraction[,,quantiles_wanted],3,mean, na.rm=TRUE), digits = 2), nsmall = dp)
-# MEAN RESIDENCE TIMES
 mrtwood <- format(round(apply(grid_output$MTT_wood_years[,,quantiles_wanted],3,mean, na.rm=TRUE), digits = 2), nsmall = dp)
 mrtroots <- format(round(apply(grid_output$MTT_roots_years[,,quantiles_wanted],3,mean, na.rm=TRUE), digits = 2), nsmall = dp)
 
@@ -66,7 +71,7 @@ par_med_95ci_df[6,i] <- mrtwood_range
 }
 
 par_med_95ci_df
-write.csv(par_med_95ci_df,"par_med_95ci_df.csv")
+# write.csv(par_med_95ci_df,"par_med_95ci_df.csv")
 
 
 
