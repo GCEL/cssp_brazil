@@ -52,12 +52,15 @@ gem_suffix_1 <- "_nomngt/infofile.RData"
 gem_midfix <- "_nomngt/RESULTS_PROCESSED/amazonia_"
 gem_suffix_2 <- "_nomngt_stock_flux.RData"
 
-for (i in mod_var) {
+for (i in new_mod_var) {
   new_gem_plots_df <- data.frame(matrix(nrow=5,ncol=ncol(gem_plots_data)))
   colnames(new_gem_plots_df) <- colnames(gem_plots_data)
   
   if (i =='esa_cci_agb') {
     new_gem_plots_df$model_plot_name <- rep('C',nrow(new_gem_plots_df))
+  }
+  else if (i =='rainfor_biomass_annual') {
+    new_gem_plots_df$model_plot_name <- rep('R0',nrow(new_gem_plots_df))
   }
   else if (i =='rainfor_biomass_productivity_2005') {
     new_gem_plots_df$model_plot_name <- rep('R1',nrow(new_gem_plots_df))
@@ -123,7 +126,7 @@ new_gem_plots_df[new_gem_plots_df$gem_region==e,c(3:20)]<-all_var_means
 }
   assign(paste("new_gem_plots_df_",i,sep=""),new_gem_plots_df)
 }
-gem_plots_model_data <- rbind(gem_plots_data,new_gem_plots_df_esa_cci_agb,new_gem_plots_df_rainfor_biomass_productivity_2005,new_gem_plots_df_rainfor_biomass_annual_productivity)
+gem_plots_model_data <- rbind(gem_plots_data,new_gem_plots_df_esa_cci_agb,new_gem_plots_df_rainfor_biomass_annual,new_gem_plots_df_rainfor_biomass_productivity_2005,new_gem_plots_df_rainfor_biomass_annual_productivity)
 gem_plots_model_data$model_plot_name <- as.factor(gem_plots_model_data$model_plot_name)
 gem_plots_model_data$gem_region <- as.factor(gem_plots_model_data$gem_region)
 str(gem_plots_model_data)
