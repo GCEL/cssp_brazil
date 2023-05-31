@@ -422,7 +422,125 @@ new_function_to_plot_them_all <- function(region,cardamom_var,model_variant,refe
   }
 }
 
+new_function_to_plot_them_both <- function(region,cardamom_var,model_variant,reference,ecoregions,ecoregions_names) {
+  par(mfrow = c(1,2),mar = c(5, 5, 2, 2),oma = c(0, 2, 3, 0))
+  for (i in cardamom_var) {
+    if (i == 'WOOD') {
+      model_benchmark_er_df<-merge_pixel_var_bench_mod_ecoregions(region,i,model_variant,reference[[1]],ecoregions,ecoregions_names)
+      #BIOM
+      model_rmse<- round(rmse(model_benchmark_er_df$benchmark,model_benchmark_er_df$cci_esa), digits = 0)
+      plot(model_benchmark_er_df$cci_esa, model_benchmark_er_df$benchmark,pch = c(0,1,2,3,4), col = factor(model_benchmark_er_df$ecoregion), 
+           main="",xlab=bquote("CARDAMOM C TCWC Biomass ("~Mg~C~ ha^-1~")"), ylab=bquote("RAINFOR TCWC Biomass ("~ Mg~C~ ha^-1~")"), 
+           xlim=c(0,220), ylim=c(0,220), 
+           cex.lab=1.5, cex.axis=1.5)
+      abline(coef = c(0,1),col='black', lwd=3)
+      text(100, 25, paste('RMSE = ',model_rmse, sep=''),cex=2)
+      # text(100, 5, paste('p-value = ',model_lm.pval, sep=''),cex=1.5)
+      legend("bottomright",legend = levels(factor(model_benchmark_er_df$ecoregion)),pch = c(0,1,2,3,4),col = factor(levels(factor(model_benchmark_er_df$ecoregion))),cex=1.5)
+      clip(x1 = 10, x2 = 200, y1 = 125, y2 = 220)
+      abline(lm(model_benchmark_er_df$benchmark ~ model_benchmark_er_df$cci_esa),col='red', lwd=3,xlim=c(20,200))
+      
+      model_rmse<- round(rmse(model_benchmark_er_df$benchmark,model_benchmark_er_df$rainfor_annual), digits = 0)
+      plot(model_benchmark_er_df$rainfor_annual,model_benchmark_er_df$benchmark,pch = c(0,1,2,3,4),col = factor(model_benchmark_er_df$ecoregion),
+           main="",xlab=bquote("CARDAMOM R2 TCWC Biomass ("~Mg~C~ ha^-1~")"), ylab="",
+           xlim=c(75,220), ylim=c(75,220), 
+           cex.lab=1.5, cex.axis=1.5)
+      abline(coef = c(0,1),col='black', lwd=3)
+      text(110, 200, paste('RMSE = ',model_rmse, sep=''),cex=2)
+      # text(110, 185, paste('p-value = ',model_lm.pval, sep=''),cex=1.5)
+      legend("bottomright",legend = levels(factor(model_benchmark_er_df$ecoregion)),pch = c(0,1,2,3,4), col = factor(levels(factor(model_benchmark_er_df$ecoregion))),cex=1.5)
+      clip(x1 = 75, x2 = 220, y1 = 110, y2 = 220)
+      abline(lm(model_benchmark_er_df$benchmark ~ model_benchmark_er_df$rainfor_annual),col='red', lwd=3)
+      # mtext(bquote("TCWC Biomass 2000-2010 ("~ Mg~C~ ha^-1~")"), line=-2, side=2, outer=TRUE, cex=1.5)
+      
+    }
+    else if (i == 'NPP_wood_flx') {
+      model_benchmark_er_df<-merge_pixel_var_bench_mod_ecoregions(region,i,model_variant,reference[[2]],ecoregions,ecoregions_names)
+      #PROD
+      model_rmse<- round(rmse(model_benchmark_er_df$benchmark,model_benchmark_er_df$cci_esa), digits = 2)
+      plot(model_benchmark_er_df$cci_esa, model_benchmark_er_df$benchmark, col = factor(model_benchmark_er_df$ecoregion),pch = c(0,1,2,3,4), 
+           main="",xlab=bquote("CARDAMOM C TCWC Productivity ("~ Mg~C~ ha^-1~year^-1~")"), ylab=bquote("RAINFOR TCWC Productivity ("~ Mg~C~ ha^-1~year^-1~")"), 
+           xlim=c(2,9), ylim=c(2,9),
+           cex.lab=1.5, cex.axis=1.5)
+      abline(coef = c(0,1),col='black', lwd=3)
+      text(7, 2, paste('RMSE = ',model_rmse, sep=''),cex=2)
+      # text(4, 2, paste('p-value = ',model_lm.pval, sep=''),cex=1.5)
+      legend("topleft",legend = levels(factor(model_benchmark_er_df$ecoregion)),pch = c(0,1,2,3,4),col = factor(levels(factor(model_benchmark_er_df$ecoregion))),cex=1.5)
+      clip(x1 = 2, x2 = 9, y1 = 2.5, y2 = 4.5)
+      abline(lm(model_benchmark_er_df$benchmark ~ model_benchmark_er_df$cci_esa),col='red', lwd=3)
+      
+      model_rmse<- round(rmse(model_benchmark_er_df$benchmark,model_benchmark_er_df$rainfor_annual), digits = 2)
+      plot(model_benchmark_er_df$rainfor_annual,model_benchmark_er_df$benchmark,pch = c(0,1,2,3,4),col = factor(model_benchmark_er_df$ecoregion),
+           main="",xlab=bquote("CARDAMOM R2 TCWC Productivity ("~ Mg~C~ ha^-1~year^-1~")"), ylab="",
+           xlim=c(2,5), ylim=c(2,5), 
+           cex.lab=1.5, cex.axis=1.5)
+      abline(coef = c(0,1),col='black', lwd=3)
+      text(4, 2, paste('RMSE = ',model_rmse, sep=''),cex=2)
+      # text(3, 2, paste('p-value = ',model_lm.pval, sep=''),cex=1.5)
+      legend("topleft",legend = levels(factor(model_benchmark_er_df$ecoregion)),pch = c(0,1,2,3,4), col = factor(levels(factor(model_benchmark_er_df$ecoregion))),cex=1.5)
+      clip(x1 = 2.7, x2 = 5, y1 = 2.7, y2 = 5)
+      abline(lm(model_benchmark_er_df$benchmark ~ model_benchmark_er_df$rainfor_annual),col='red', lwd=3)
+      # mtext(bquote("TCWC Productivity 2000-2010 ("~ Mg~C~ ha^-1~year^-1~")"), line=-2, side=2, outer=TRUE, cex=1.5)
+    }
+    else if (i == 'OUTPUT_wood_flx') {
+      model_benchmark_er_df<-merge_pixel_var_bench_mod_ecoregions(region,i,model_variant,reference[[3]],ecoregions,ecoregions_names)
+      #MORT
+      model_rmse<- round(rmse(model_benchmark_er_df$benchmark,model_benchmark_er_df$cci_esa), digits = 2)
+      plot(model_benchmark_er_df$cci_esa, model_benchmark_er_df$benchmark, col = factor(model_benchmark_er_df$ecoregion),pch = c(0,1,2,3,4), 
+           main="",xlab=bquote("CARDAMOM C TCWC Mortality ("~ Mg~C~ ha^-1~year^-1~")"), ylab=bquote("RAINFOR TCWC Mortality ("~ Mg~C~ ha^-1~year^-1~")"), 
+           xlim=c(2,9), ylim=c(2,9),
+           cex.lab=1.5, cex.axis=1.5)
+      abline(coef = c(0,1),col='black', lwd=3)
+      text(6, 8, paste('RMSE = ',model_rmse, sep=''),cex=2)
+      # text(6, 8.5, paste('p-value = ',model_lm.pval, sep=''),cex=1.5)
+      legend("topleft",legend = levels(factor(model_benchmark_er_df$ecoregion)),pch = c(0,1,2,3,4),col = factor(levels(factor(model_benchmark_er_df$ecoregion))),cex=1.5)
+      clip(x1 = 2, x2 = 8, y1 = 2, y2 = 4)
+      abline(lm(model_benchmark_er_df$benchmark ~ model_benchmark_er_df$cci_esa),col='red', lwd=3)
+      
+      model_rmse<- round(rmse(model_benchmark_er_df$benchmark,model_benchmark_er_df$rainfor_annual), digits = 2)
+      plot(model_benchmark_er_df$rainfor_annual,model_benchmark_er_df$benchmark,pch = c(0,1,2,3,4),col = factor(model_benchmark_er_df$ecoregion),
+           main="",xlab=bquote("CARDAMOM R2 TCWC Mortality ("~ Mg~C~ ha^-1~year^-1~")"), ylab="",
+           xlim=c(2,5), ylim=c(2,5), 
+           cex.lab=1.5, cex.axis=1.5)
+      abline(coef = c(0,1),col='black', lwd=3)
+      text(3.5, 4.5, paste('RMSE = ',model_rmse, sep=''),cex=2)
+      # text(3.5, 4.8, paste('p-value = ',model_lm.pval, sep=''),cex=1.5)
+      legend("topleft",legend = levels(factor(model_benchmark_er_df$ecoregion)),pch = c(0,1,2,3,4), col = factor(levels(factor(model_benchmark_er_df$ecoregion))),cex=1.5)
+      clip(x1 = 2.75, x2 = 5, y1 = 2, y2 = 4)
+      abline(lm(model_benchmark_er_df$benchmark ~ model_benchmark_er_df$rainfor_annual),col='red', lwd=3)
+      # mtext(bquote("TCWC Mortality 2000-2010 ("~ Mg~C~ ha^-1~year^-1~")"), line=-2, side=2, outer=TRUE, cex=1.5)
+    }
+    else {
+      model_benchmark_er_df<-merge_pixel_var_bench_mod_ecoregions(region,i,model_variant,reference[[4]],ecoregions,ecoregions_names)
+      #RT
+      model_rmse<- round(rmse(model_benchmark_er_df$benchmark,model_benchmark_er_df$cci_esa), digits = 0)
+      plot(model_benchmark_er_df$cci_esa, model_benchmark_er_df$benchmark, col = factor(model_benchmark_er_df$ecoregion),pch = c(0,1,2,3,4), 
+           main="",xlab="CARDAMOM C TCWC RT (years)", ylab=bquote("RAINFOR TCWC Residence Time (years)"), 
+           xlim=c(0,80), ylim=c(0,80),
+           cex.lab=1.5, cex.axis=1.5)
+      abline(coef = c(0,1),col='black', lwd=3)
+      text(40, 5, paste('RMSE = ',model_rmse, sep=''),cex=2)
+      legend("bottomright",legend = levels(factor(model_benchmark_er_df$ecoregion)),pch = c(0,1,2,3,4),col = factor(levels(factor(model_benchmark_er_df$ecoregion))),cex=1.5)
+      clip(x1 = 0, x2 = 30, y1 = 40, y2 = 80)
+      abline(lm(model_benchmark_er_df$benchmark ~ model_benchmark_er_df$cci_esa),col='red', lwd=3)
+      
+      model_rmse<- round(rmse(model_benchmark_er_df$benchmark,model_benchmark_er_df$rainfor_annual), digits = 0)
+      plot(model_benchmark_er_df$rainfor_annual,model_benchmark_er_df$benchmark,pch = c(0,1,2,3,4),col = factor(model_benchmark_er_df$ecoregion),
+           main="",xlab="CARDAMOM R2 TCWC RT (years)", ylab="",
+           xlim=c(0,80), ylim=c(0,80), 
+           cex.lab=1.5, cex.axis=1.5)
+      abline(coef = c(0,1),col='black', lwd=3)
+      text(40, 5, paste('RMSE = ',model_rmse, sep=''),cex=2)
+      legend("bottomright",legend = levels(factor(model_benchmark_er_df$ecoregion)),pch = c(0,1,2,3,4), col = factor(levels(factor(model_benchmark_er_df$ecoregion))),cex=1.5)
+      clip(x1 = 30, x2 = 70, y1 = 40, y2 = 80)
+      abline(lm(model_benchmark_er_df$benchmark ~ model_benchmark_er_df$rainfor_annual),col='red', lwd=3)
+      # mtext(bquote("TCWC Residence Time 2000-2010 (years)"), line=-2, side=2, outer=TRUE, cex=1.5)
+    }
+  }
+}
+
 new_function_to_plot_them_all(amazonia_ifl_layer,compare_var_names[4],updated_mod_var,reference_data_ifl,reg_data,reg_names)
+new_function_to_plot_them_both(amazonia_ifl_layer,compare_var_names,updated_mod_var,reference_data_ifl,reg_data,reg_names)
 
 #figures
 par(mfrow = c(1,1))
